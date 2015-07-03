@@ -19,7 +19,7 @@ DJPika = matrix(0,nrow= 79,ncol=1)
 #Model parameters
 r= 1.625 #1.625 (3.25) Smith: Ecology 1974a 
 u= 0.37 #0.37 Smith: Ecology 1974a, 1978
-d_m=0.65#  0.57-0.75 from Nagy's presentation?
+d_m=0.75#  0.57-0.75 from Nagy's presentation?
 d_prop = 0.25 #Nagy unpublished- value based on Smith 74ab, 78
 
 #########

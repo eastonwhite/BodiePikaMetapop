@@ -9,7 +9,7 @@
 
 ptm=proc.time() #model timer
 
-trials=10 #number of times to run 'SimpleBodieModel_model.R'
+trials=20 #number of times to run 'SimpleBodieModel_model.R'
 
 #test values from random rounding script 
 TC=TC_test
@@ -25,9 +25,7 @@ trial_pop=list()
 
 #creates matrix of patchs within specified distance of each other
 main<-read.table("/Users/easton2/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/patchdistance.txt")
-attach(main)
 main=main[1:79,1:79]
-
 main[main<=300]=1
 main[main>300]=0
 
