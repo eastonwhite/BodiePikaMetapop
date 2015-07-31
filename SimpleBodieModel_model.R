@@ -6,7 +6,7 @@
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 
 #time for model to run
-max.time= 38#38#19 #38 years to match bodie census length to 2009
+max.time= 500#38#19 #38 years to match bodie census length to 2009
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)
@@ -16,7 +16,7 @@ DJPika = matrix(0,nrow= 79,ncol=1)
 #Model parameters
 r= 1.625 #1.625 (3.25) Smith: Ecology 1974a 
 u= 0.37 #0.37 Smith: Ecology 1974a, 1978
-d_m=0.5 #  0.57-0.75 from Nagy's presentation
+d_m=0.55 #  0.57-0.75 from Nagy's presentation
 d_prop = 0.25 #Nagy unpublished- value based on Smith 74ab, 78
 
 ##########################################################
@@ -49,7 +49,7 @@ for (j in 2:(max.time)){
       #This code chuck ignores contribution from patch 1 to rest of populatiton (it is too far from any other patch)
       DOP=matrix(0,nrow=79,ncol=79)
       for (g in 1:79){
-        if (g>1){
+        if (sum(main[g,1:79])>0){
         DOP[1:79,g]=rmultinom(1,DJPika[g,1],prob=main[g,1:79])
         }else{
           DOP[1:79,g]=0

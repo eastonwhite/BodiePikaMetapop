@@ -33,8 +33,8 @@ IC1991[78]=6
 IC1991[65]=50
 
 
-  trials=1000
-  IC=IC1972
+  trials=100
+  IC=IC1972 #set initial conditions (1972 data by default)
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
   trial_mean_sd=matrix(0,nrow=1,ncol=trials)
@@ -50,27 +50,28 @@ IC1991[65]=50
   
     #Run model numerous times
     for (k in 1:trials){
-      source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/inverse_modeling_approach_model.R")
+      source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/SimpleBodieModel_model.R")
       
       ######take measurements of model#####
       #APika_sample=APika #for long sample
       #APika_sample[which(is.na(NA_matrix[1])),]=NA #for long sample
       
       #different measurements to take depending on if we start with 1991 or 1972 initial conditions (we use 1991 for inverse modeling approach, 1972 elsewhere)
-      if (sum(IC==IC1991)==79){
-        APika_sample=NA_matrix[,20:38]*APika #for 19 year model
-        APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
-      }else if(sum(IC==IC1972)==79){
-        APika_sample=NA_matrix*APika
-        APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
-      }
+       if (sum(IC==IC1991)==79){
+         APika_sample=NA_matrix[,20:38]*APika #for 19 year model
+         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
+         trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+       }else if(sum(IC==IC1972)==79){
+         APika_sample=NA_matrix*APika
+         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
+         trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+       }
+      #########
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
       trial_mean_sd[,k]=sd(colSums(APika_sample,na.rm=T))
       trial_variance[,k]=var(colSums(APika_sample,na.rm=T))
-      trial_ext_year[,k]=(1971 + which((colSums(APika[c(2:19,21:37,57,58),]))<10)[1])
+      trial_ext_year[,k]=(1971 + which((colSums(APika[c(2:19,21:37,57,58),]))<14)[1])
       trial_occupancy[,k]=mean(colSums(APika_sample[1:79,]>0,na.rm=T)/66)
       trial_occupancy_sd[,k]=sd(colSums(APika_sample[1:79,]>0,na.rm=T)/66)
       trial_sampled_pop[[k]]=APika_sample
@@ -86,12 +87,18 @@ IC1991[65]=50
       
       trial_ext_events[,k]=sum(ext_events)
       trial_recol_events[,k]=sum(recol_events)	
-      
+    
+      if (k %in% seq(50,1000,by=50)) print(k)  #a simple counter
 }
 
 
 
 end_time=proc.time()-ptm #calculate total time model takes to run
+
+
+#save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,
+#     trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,
+#     trial_error,trial_sampled_pop,trial_pop,file='Modeloutput_300years_dm0.55_1000trials.Rdata')
 
 
 
