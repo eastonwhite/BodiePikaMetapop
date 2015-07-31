@@ -1,3 +1,6 @@
 *.pdf
 *.Rmd
 *history
+*.Rdata
+*.txt
+old_versions/*
