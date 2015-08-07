@@ -1,4 +1,10 @@
+#Easton R. White 
+#Bodie Pika Dispersal Model used in a 2x2 factorial design experiment
+#created 22-June-2012
+#Last edited 7-Aug-2015
+
 #Run four different model setups for comparison
+#this model is compatible with 'SimpleBodieModel_model.R'
 
 ##PULL in neccessary stuffs##
 
@@ -333,15 +339,15 @@ for (k in 1:trials){
 }
 
 
-save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,
-     trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,
-     trial_error,trial_sampled_pop,trial_pop,two_trial_mean,two_trial_mean_sd,two_trial_variance,two_trial_ext_year,
-          two_trial_occupancy,two_trial_occupancy_sd,two_trial_ext_events,two_trial_recol_events,
-          two_trial_error,two_trial_sampled_pop,two_trial_pop,three_trial_mean,three_trial_mean_sd,three_trial_variance,three_trial_ext_year,
-          three_trial_occupancy,three_trial_occupancy_sd,three_trial_ext_events,three_trial_recol_events,
-          three_trial_error,three_trial_sampled_pop,three_trial_pop,four_trial_mean,four_trial_mean_sd,four_trial_variance,four_trial_ext_year,
-          four_trial_occupancy,four_trial_occupancy_sd,four_trial_ext_events,four_trial_recol_events,
-          four_trial_error,four_trial_sampled_pop,four_trial_pop,file='FourModelExperiment_1000trials500years.Rdata')
+# save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,
+#      trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,
+#      trial_error,trial_sampled_pop,trial_pop,two_trial_mean,two_trial_mean_sd,two_trial_variance,two_trial_ext_year,
+#           two_trial_occupancy,two_trial_occupancy_sd,two_trial_ext_events,two_trial_recol_events,
+#           two_trial_error,two_trial_sampled_pop,two_trial_pop,three_trial_mean,three_trial_mean_sd,three_trial_variance,three_trial_ext_year,
+#           three_trial_occupancy,three_trial_occupancy_sd,three_trial_ext_events,three_trial_recol_events,
+#           three_trial_error,three_trial_sampled_pop,three_trial_pop,four_trial_mean,four_trial_mean_sd,four_trial_variance,four_trial_ext_year,
+#           four_trial_occupancy,four_trial_occupancy_sd,four_trial_ext_events,four_trial_recol_events,
+#           four_trial_error,four_trial_sampled_pop,four_trial_pop,file='FourModelExperiment_1000trials500years.Rdata')
 
 
 #####################################################################
