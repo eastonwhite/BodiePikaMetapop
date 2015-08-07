@@ -88,9 +88,11 @@ lines(seq(0.01,0.99,0.001),predict(prediction,data.frame(d_m_vector=seq(0.01,0.9
 #which(round(predict(prediction,data.frame(d_m_vector=seq(0.01,0.99,0.001))))==21106)
 ```
 
-### 1. Estimation of disperser mortality probablity
+### 1. Estimation of weaning mortality and disperser mortality probablities
 
-Although the importance of the cost of dispersal in driving dynamics at Bodie has been noted by several authors [cite], we still do not have a good field estimate of the parameter. This is the only parameter in our model in which we do not have a good estimate. Past work has indicated that the cost of dispersal must be high [citations]. During dispersal, juvenile pikas are often chased off patches by established adults, killed by predators, and have to endure high summer temperatures [citations]. 
+When pikas are born they face high mortality rates. A lot of mortality occurs between birth and the time juvenile pikas are weaned (enter time here). We do not have an estimate of this
+
+Although the importance of the cost of dispersal in driving dynamics at Bodie has been noted by several authors [cite], we still do not have a good field estimate of the parameter. Past work has indicated that the cost of dispersal must be high [citations]. During dispersal, juvenile pikas are often chased off patches by established adults, killed by predators, and have to endure high summer temperatures [citations]. 
 
 We used our simulation model and an inverse pattern-orientated approach to estimate disperser mortality probability [@Hartig2011; @White2014]. Essentially, we ran our simulation model with different dispersal mortality probabilities and compared model outputs to census data. Here is a more detailed explanation of our approach:
 
