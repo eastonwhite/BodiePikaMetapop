@@ -1,12 +1,16 @@
 #Created by Easton R White
 #Created on 25-Jun-2015
-#Last edited 26-Jul-2015
+#Last edited 7-Aug-2015
 
 #This is code to perform an inverse modeling scheme to find reasonable values for dispersal survival rate
 #I run simulations using different values of dispersal mortality to see which value fits
 #the census data from 1991-2009 (where we have the most complete census data)
 
-d_m_vector=seq(0.55,0.55,by=0.01) #vector of dispersal mortality rates to test
+#Parameters not known from field
+d_m_vector=0.7 #rep(seq(0.08,0.95,by=0.03),times=30)
+weaning_m_vector=0.5 #rep(seq(0.08,0.95,by=0.03), each = 30, len = 900) #vector of dispersal mortality rates to test
+
+#from cross validation scheme d_m=0.77,weaning_m=0.44
 
 #empty vectors to store measurements made for each dispersal mortality value
 trial_trial_mean=matrix(0,nrow=1,ncol=length(d_m_vector)) #mean population size
@@ -27,7 +31,7 @@ main[main>300]=0
 main=as.matrix(main)
 diag(main)=0 #makes it so pikas cannot disperse back to their own natal patch
 
-#Bodie 1972 conditions
+#Bodie territory counts (constant over time)
 territories=c(6,5,3,7,3,4,3,4,5,5,5,3,3,4,3,3,4,4,3,3,
               5,5,3,3,3,4,4,3,3,2,3,4,3,3,4,3,5,5,9,3,5,
               5,4,14,4,5,5,7,13,4,3,3,3,4,2,5,11,12,3,13,
@@ -48,8 +52,9 @@ IC1991[65]=50
 for (IM in 1:length(d_m_vector)){
 
   d_m = d_m_vector[IM] #set disperser mortality rate
-
-  trials=100
+  weaning_m = weaning_m_vector[IM]
+ 
+  trials=25
   IC=IC1972
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -69,19 +74,20 @@ for (IM in 1:length(d_m_vector)){
       source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/inverse_modeling_approach_model.R")
       
       ######take measurements of model#####
-      APika_sample=APika #for long sample
-      APika_sample[which(is.na(NA_matrix[1])),]=NA #for long sample
+      #APika_sample=APika #for long sample
+      #APika_sample[which(is.na(NA_matrix[1])),]=NA #for long sample
       
-#       #different measurements to take depending on if we start with 1991 or 1972 initial conditions (we use 1991 for inverse modeling approach, 1972 elsewhere)
-#       if (sum(IC==IC1991)==79){
-#         APika_sample=NA_matrix[,20:38]*APika #for 19 year model
-#         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-#         trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
-#       }else if(sum(IC==IC1972)==79){
-#         APika_sample=NA_matrix*APika
-#         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-#         trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
-#       }
+      #different measurements to take depending on if we start with 1991 or 1972 initial conditions (we use 1991 for inverse modeling approach, 1972 elsewhere)
+      if (sum(IC==IC1991)==79){
+        APika_sample=NA_matrix[,20:38]*APika #for 19 year model
+        APika_sample=APika_sample[,-c(12,17)] # for 19 year model
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        #trial_error[,k]=sum((colSums(sampled_census_bodie[,seq(4,20,by=2)],na.rm=T) - colSums(APika_sample[,seq(1,17,by=2)],na.rm=T))^2) #use training set from 1991 onward
+      }else if(sum(IC==IC1972)==79){
+        APika_sample=NA_matrix*APika
+        APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+      }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
       trial_mean_sd[,k]=sd(colSums(APika_sample,na.rm=T))
@@ -117,10 +123,10 @@ for (IM in 1:length(d_m_vector)){
   trial_trial_recol_events[IM]=mean(trial_recol_events)
   trial_trial_error[IM]=mean(trial_error)
 
-print(paste('value',d_m_vector[IM],sep='')) #a simple counter
+print(paste('value',IM,sep='')) #a simple counter
 
 }
 
-#save(IC,trials,d_m_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,
+#save(IC,trials,d_m_vector,weaning_m_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,
 #     trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,
-#    trial_trial_recol_events,trial_trial_error,file='inverse_modeling_1000trials.Rdata')
+#    trial_trial_recol_events,trial_trial_error,file='inverse_modeling_100trials_900combo_d_and_w.Rdata')

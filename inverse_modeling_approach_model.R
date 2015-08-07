@@ -1,12 +1,13 @@
 #Easton R. White 
 #Bodie Pika Dispersal Model
 #created 22-June-2012
-#Last edited 26-Jul-2015
+#Last edited 7-Aug-2015
 
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
-
+#the code now uses the actual litter size distribution found in Smith 1978. The code also includes a term for mortality between birth and weaning
 #time for model to run
-max.time= 200#38#19 #38 years to match bodie census length to 2009
+
+max.time= 38 #38 is for 1972 to 2009, # 19 is for 1991 to 2009
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)
@@ -14,19 +15,27 @@ JPika = matrix(0,nrow= 79,ncol=max.time)
 DJPika = matrix(0,nrow= 79,ncol=1)
 
 #Model parameters
-r= 1.625 #1.625 (3.25) Smith: Ecology 1974a 
-u= 0.37 #0.37 Smith: Ecology 1974a, 1978
-#d_m=0.75#  0.57-0.75 from Nagy's presentation
-d_prop = 0.25 #Nagy unpublished- value based on Smith 74ab, 78
+r= 3.25         #1.625 (3.25) Smith: Ecology 1974a 
+u= 0.37         #0.37 Smith: Ecology 1974a, 1978
+#d_m=0.7        # from this paper
+d_prop = 0.25   #Nagy unpublished, Smith 1987
+#weaning_m=0.5  #value from this paper, Millar 1973 found a value of 0.21, but this was in Alberta
 
 ##########################################################
 ##########################################################
 for (j in 2:(max.time)){
   for (i in 1:79){
     
-    #birth and dispersal functions
+    #over winter mortality function
     APika[i,j] = APika[i,j-1] - rbinom(1,APika[i,j-1],u) #adult mortality rate to correspond with the census occuring before winter
-    JPika[i,j] = sum(rpois(round(APika[i,j]/2 + sample(c(-0.1,0.1),size=1)), r)) #the bizarre command inside the rpois function simply allows for a patch with 2.5 females to be 2 or 3 females 
+    
+    #birth functions
+    reproducers=round(APika[i,j]/2 + sample(c(-0.1,0.1),size=1)) #the bizarre command inside the rpois function simply allows for a patch with 2.5 females to be 2 or 3 females 
+    #JPika[i,j] = sum(rpois(reproducers, r))  #this command produces juveniles but uses a Poisson distribution instead of actual litter size data
+    JPika[i,j] = sum(sample(1:5,reproducers,replace = TRUE,prob =c(0.02326, 0.2093, 0.3256, 0.3256, 0.1163) ) ) #this command samples litter sizes from Smith 1978 and Tapper 1955
+    JPika[i,j]= JPika[i,j] - rbinom(1,JPika[i,j],weaning_m) #0.21 from Millar 1973 for pikas in Alberta
+    
+    #dispersal process
     DJPika[i,1] = rbinom(1,JPika[i,j],d_prop) #subset of pikas (DJPika) automatically disperse
     JPika[i,j] = JPika[i,j]- DJPika[i,1]
     
@@ -46,7 +55,7 @@ for (j in 2:(max.time)){
   }
   
       #call to randomly take DJPika (without territories) and send them to nearby patches
-      #This code chuck ignores contribution from patch 1 to rest of populatiton (it is too far from any other patch)
+      #This code chuck ignores contribution from isolated patches to rest of populatiton (it is too far from any other patch)
       DOP=matrix(0,nrow=79,ncol=79)
       for (g in 1:79){
         if (sum(main[g,1:79])>0){

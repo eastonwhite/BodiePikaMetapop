@@ -1,7 +1,8 @@
 ---
 number_sections: yes
+bibliography: White_bib.bib
 output: 
-  pdf_document:
+  pdf_document: 
     fig_caption: true
 ---
 \vspace{2cm}
@@ -19,15 +20,16 @@ output:
 This supplementary material includes:
 
 1. Mathematical description of our model
-1. Inverse pattern-orientated estimation procedure
-2. Effects of spatial structure and patch heterogeneity
-3. Parameter sensitivity
-4. 
+2. Inverse pattern-orientated estimation procedure
+3. Effects of spatial structure and patch heterogeneity
+4. Parameter sensitivity
+5. Individual patch dynamics over time
+6. 
 
 \vspace{2cm}
 
 ### 1 Expanded methods
-#### Model
+#### Model description
 Let $\mathbf{x}(n)$ be the total number of pikas at Bodie at census time $n$, where $n \in \{0,1,2,\ldots\}$. We denote the total number of pikas on a given patch, $j$, as $x_j(n),\, j \in \{1,2,3,\ldots,79\}$. Note that all pikas in a given census are considered breeding adults because juvenile pikas that survive their first year are then capable of reproduction. To match the timing of the actual Bodie census, we assume our model census takes place in late summer/early fall, just before the winter season at Bodie. For simplicity, we assume males and females are equivalent, except for the fact that only females can reproduce. We also assume that adults do not disperse and that juveniles only get one opportunity to disperse (immediately after they are born). We model fecundity and mortality as Poisson and binomial random variables, respectively. We assume dispersal is a piece-wise function of distance between patches govered by a multinomial random variable. All of these assumptions are rooted in the available literature on pika biology. 
 
 #### Fecundity
@@ -88,9 +90,9 @@ lines(seq(0.01,0.99,0.001),predict(prediction,data.frame(d_m_vector=seq(0.01,0.9
 
 ### 1. Estimation of disperser mortality probablity
 
-Although the importance of the cost of dispersal in driving dynamics at Bodie has been noted by several authors [cite], we still do not have a good field estimate of the parameter. This is the only parameter in our model in which we do not have a good estimate. Past work has indicated that the cost of dispersal must be high [citations]. During dispersal, juvenile pikas are often chased off patches by established adults, killed by predators, and have to endure high summer temperatures[citations]. 
+Although the importance of the cost of dispersal in driving dynamics at Bodie has been noted by several authors [cite], we still do not have a good field estimate of the parameter. This is the only parameter in our model in which we do not have a good estimate. Past work has indicated that the cost of dispersal must be high [citations]. During dispersal, juvenile pikas are often chased off patches by established adults, killed by predators, and have to endure high summer temperatures [citations]. 
 
-We used our simulation model and an inverse pattern-orientated approach to estimate disperser mortality probability [citations]. Essentially, we ran our simulation model with different dispersal mortality probabilities and compared model outputs to census data. Here is a more detailed explanation of our approach:
+We used our simulation model and an inverse pattern-orientated approach to estimate disperser mortality probability [@Hartig2011; @White2014]. Essentially, we ran our simulation model with different dispersal mortality probabilities and compared model outputs to census data. Here is a more detailed explanation of our approach:
 
 1. We initialized our model with census data from the year 1991 and the other parameter values we have estimated in the field. We initialized the model with 1991 census data because the period between 1991 and 2009 is the most continuous set of census data we have for Bodie. 
 2. We then ran the model 1000 times for each different value of disperser mortality probability from 0.01 to 0.99. 
@@ -487,6 +489,9 @@ mtext(text=(names(sampled_census_bodie)[q]), side=1,line=-2,outer=F)
 
 ```    
 
+\pagebreak
+
+### References
 
 
 

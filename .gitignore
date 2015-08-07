@@ -5,3 +5,4 @@
 *.txt
 old_versions/*
 boxplots.R
+*.bib
