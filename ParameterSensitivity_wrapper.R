@@ -1,15 +1,18 @@
 #Created by Easton R White
 #Created on 31-Jul-2015
-#Last edited 31-Jul-2015
+#Last edited 7-Aug-2015
 
 #This is code to test the sensitivity of different model parameters. The code is very similar to 
 #what I used in the inverse_modeling_approach_wrapper.R setup
 
-d_m_vector=seq(0.55,0.55,by=0.01) 
-radius_vector=seq(100,700,by=25)
+NA_matrix=read.table("NA_matrix.txt",sep=" ",header=T)
+sampled_census_bodie=read.table("sampled_census_bodie.txt",sep=" ",header=T)
+d_m_vector=seq(0.05,0.95,by=0.05) 
+radius_vector=seq(100,550,by=25)
 d_prop_vector=seq(0.05,0.95,by=0.05)
-r_vector= seq(0.5,3,by=0.25)
+#r_vector= seq(0.5,6,by=0.25)
 u_vector=seq(0.05,0.95,by=0.05)
+weaning_m_vector=seq(0.05,0.95,by=0.05) 
 
 #empty vectors to store measurements made for each dispersal mortality value
 trial_trial_mean=matrix(0,nrow=1,ncol=length(d_m_vector)) #mean population size
@@ -40,19 +43,23 @@ IC1991[65]=50
 #########################################
 
 #start vector for testing different dispersal mortality values
-for (IM in 1:length(r_vector)){
+for (IM in 1:length(d_prop_vector)){
 
+  ## Have to comment out all "vector_name[IM]" except for one you are testing
   #d_m = d_m_vector[IM] #set disperser mortality rate
   #radius = radius_vector[IM]
-  #d_prop=d_prop_vector[IM]
-  r=r_vector[IM]
+  d_prop=d_prop_vector[IM]
+  #r=r_vector[IM]
   #u=u_vector[IM]
+  #weaning_m = weaning_m_vector[IM]
+  
   ####default model parameters#
-  radius=300
+  radius=300     #from Smith and Gilpin 1997
   #r= 1.625      #1.625 (3.25) Smith: Ecology 1974a 
-  u= 0.37       #0.37 Smith: Ecology 1974a, 1978
-  d_m=0.55      #from this paper
-  d_prop = 0.25 #Nagy unpublished, Smith 1987
+  u= 0.37        #0.37 Smith: Ecology 1974a, 1978
+  d_m=0.7        #from this paper
+  #d_prop = 0.25 #Nagy unpublished, Smith 1987
+  weaning_m =0.5 #from this paper
   ####default model parameters#
 
   #creates matrix of patchs within specified distance of each other (300m is default dispersal distance)
@@ -64,7 +71,7 @@ for (IM in 1:length(r_vector)){
   diag(main)=0 #makes it so pikas cannot disperse back to their own natal patch
   
   #Start model setup here
-  trials=100
+  trials=10
   IC=IC1972
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -81,7 +88,7 @@ for (IM in 1:length(r_vector)){
   
     #Run model numerous times
     for (k in 1:trials){
-      source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/inverse_modeling_approach_model.R")
+      source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/ParameterSensitivity_model.R")
       
       ######take measurements of model#####
       #APika_sample=APika #for long sample
