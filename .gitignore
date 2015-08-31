@@ -6,3 +6,7 @@
 old_versions/*
 boxplots.R
 *.bib
+Model-Outputs/*
+Plots/*
+ParameterSensitivityCode/*
+old_result_outputs/*
