@@ -1,6 +1,6 @@
 #Created by Easton R White
 #Created on 31-Jul-2015
-#Last edited 7-Aug-2015
+#Last edited 1-Sep-2015
 
 #This is code to test the sensitivity of different model parameters. The code is very similar to 
 #what I used in the inverse_modeling_approach_wrapper.R setup
@@ -10,7 +10,7 @@ sampled_census_bodie=read.table("sampled_census_bodie.txt",sep=" ",header=T)
 d_m_vector=seq(0.05,0.95,by=0.05) 
 radius_vector=seq(100,550,by=25)
 d_prop_vector=seq(0.05,0.95,by=0.05)
-#r_vector= seq(0.5,6,by=0.25)
+#r_vector= seq(0.5,6,by=0.25) #no longer used because I am now using actual litter size distribution
 u_vector=seq(0.05,0.95,by=0.05)
 weaning_m_vector=seq(0.05,0.95,by=0.05) 
 
@@ -45,7 +45,7 @@ IC1991[65]=50
 #start vector for testing different dispersal mortality values
 for (IM in 1:length(d_prop_vector)){
 
-  ## Have to comment out all "vector_name[IM]" except for one you are testing
+  ##!! Have to comment out all "vector_name[IM]" except for one you are testing
   #d_m = d_m_vector[IM] #set disperser mortality rate
   #radius = radius_vector[IM]
   d_prop=d_prop_vector[IM]
@@ -55,7 +55,7 @@ for (IM in 1:length(d_prop_vector)){
   
   ####default model parameters#
   radius=300     #from Smith and Gilpin 1997
-  #r= 1.625      #1.625 (3.25) Smith: Ecology 1974a 
+  #r= 1.625      #1.625 (3.25) Smith: Ecology 1974a #no longer used, no we use actual distribution of litter sizes 
   u= 0.37        #0.37 Smith: Ecology 1974a, 1978
   d_m=0.7        #from this paper
   #d_prop = 0.25 #Nagy unpublished, Smith 1987
@@ -114,10 +114,10 @@ for (IM in 1:length(d_prop_vector)){
       trial_sampled_pop[[k]]=APika_sample
       trial_pop[[k]]=APika
       
-      
-      ext_events = matrix(0,nrow=1,ncol=17-1)
-      recol_events = matrix(0,nrow=1,ncol=17-1)
-      for (j in 1:(17-1)){
+      #the extinction and recolonization events are counted for only sampled years from 1972-2009. This can be easily changed
+      ext_events = matrix(0,nrow=1,ncol=20-1)
+      recol_events = matrix(0,nrow=1,ncol=20-1)
+      for (j in 1:(20-1)){
         ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
         recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
       }

@@ -6,7 +6,7 @@
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 
 #time for model to run
-max.time= 100#38#19 #38 years to match bodie census length to 2009
+max.time= 500#38#19 #38 years to match bodie census length to 2009
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)
@@ -14,11 +14,11 @@ JPika = matrix(0,nrow= 79,ncol=max.time)
 DJPika = matrix(0,nrow= 79,ncol=1)
 
 #Model parameters
-#r= 3.25       #1.625 (3.25) Smith: Ecology 1974a 
+#r= 3.25       #1.625 (3.25) Smith: Ecology 1974a, we are currently using actual litter size data
 u= 0.37         #0.37 Smith: Ecology 1974a, 1978
-d_m=0.7        # from this paper
+d_m=0.48        # from this paper
 d_prop = 0.25   #Nagy unpublished, Smith 1987
-weaning_m=0.5  #value from this paper, Millar 1973 found a value of 0.21, but this was in Alberta
+weaning_m=0.52  #value from this paper, Millar 1973 found a value of 0.21, but this was in Alberta
 
 
 ##########################################################

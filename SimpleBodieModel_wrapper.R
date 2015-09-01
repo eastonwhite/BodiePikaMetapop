@@ -1,7 +1,7 @@
 #Easton R. White 
 #Bodie Pika Dispersal Model wrapper
 #created 22-June-2012
-#Last edited 28-Jun-2015
+#Last edited 1-Sep-2015
 
 # /Users/easton2/Desktop/Research/Nagy Lab/Pikas/Modeling
 
@@ -33,7 +33,7 @@ IC1991[78]=6
 IC1991[65]=50
 
 
-  trials=10
+  trials=1
   IC=IC1972 #set initial conditions (1972 data by default)
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -77,10 +77,10 @@ IC1991[65]=50
       trial_sampled_pop[[k]]=APika_sample
       trial_pop[[k]]=APika
       
-      
-      ext_events = matrix(0,nrow=1,ncol=17-1)
-      recol_events = matrix(0,nrow=1,ncol=17-1)
-      for (j in 1:(17-1)){
+      #the extinction and recolonization events are counted for only sampled years from 1972-2009. This can be easily changed
+      ext_events = matrix(0,nrow=1,ncol=20-1)
+      recol_events = matrix(0,nrow=1,ncol=20-1)
+      for (j in 1:(20-1)){
         ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
         recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
       }
@@ -96,9 +96,7 @@ IC1991[65]=50
 end_time=proc.time()-ptm #calculate total time model takes to run
 
 
-#save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,
-#     trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,
-#     trial_error,trial_sampled_pop,trial_pop,file='Modeloutput_300years_dm0XX_1000trials.Rdata')
+save(IC,trials,d_m,weaning_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,trial_error,trial_sampled_pop,trial_pop,file='Modeloutput_300years_dm048_wm0.52_1000trials.Rdata')
 
 
 

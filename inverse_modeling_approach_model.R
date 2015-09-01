@@ -1,13 +1,13 @@
 #Easton R. White 
 #Bodie Pika Dispersal Model
 #created 22-June-2012
-#Last edited 7-Aug-2015
+#Last edited 1-Sep-2015
 
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 #the code now uses the actual litter size distribution found in Smith 1978. The code also includes a term for mortality between birth and weaning
 #time for model to run
 
-max.time= 38 #38 is for 1972 to 2009, # 19 is for 1991 to 2009
+max.time= 19 #38 is for 1972 to 2009, # 19 is for 1991 to 2009
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)
@@ -15,7 +15,7 @@ JPika = matrix(0,nrow= 79,ncol=max.time)
 DJPika = matrix(0,nrow= 79,ncol=1)
 
 #Model parameters
-r= 3.25         #1.625 (3.25) Smith: Ecology 1974a 
+##r= 3.25         #1.625 (3.25) Smith: Ecology 1974a, #no longer used, now we use actual distribution of litter sizes from Smith 1978
 u= 0.37         #0.37 Smith: Ecology 1974a, 1978
 #d_m=0.7        # from this paper
 d_prop = 0.25   #Nagy unpublished, Smith 1987

@@ -1,7 +1,7 @@
 #Easton R. White 
 #Bodie Pika Dispersal Model parameter sensitivity model script (almost same as regular model script but parameters are commented out)
 #created 22-June-2012
-#Last edited 7-Aug-2015
+#Last edited 1-Sep-2015
 
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 

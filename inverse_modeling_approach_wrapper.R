@@ -7,8 +7,8 @@
 #the census data from 1991-2009 (where we have the most complete census data)
 
 #Parameters not known from field
-d_m_vector=0.7 #rep(seq(0.08,0.95,by=0.03),times=30)
-weaning_m_vector=0.5 #rep(seq(0.08,0.95,by=0.03), each = 30, len = 900) #vector of dispersal mortality rates to test
+d_m_vector=rep(seq(0.02,0.98,by=0.02),times=49)
+weaning_m_vector=rep(seq(0.02,0.98,by=0.02), each = 49, length = 2401) #vector of dispersal mortality rates to test
 
 #from cross validation scheme d_m=0.77,weaning_m=0.44
 
@@ -54,8 +54,8 @@ for (IM in 1:length(d_m_vector)){
   d_m = d_m_vector[IM] #set disperser mortality rate
   weaning_m = weaning_m_vector[IM]
  
-  trials=25
-  IC=IC1972
+  trials=100
+  IC=IC1991
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
   trial_mean_sd=matrix(0,nrow=1,ncol=trials)
@@ -98,7 +98,7 @@ for (IM in 1:length(d_m_vector)){
       trial_sampled_pop[[k]]=APika_sample
       trial_pop[[k]]=APika
       
-      
+      #Currently this code is set of to count extinction and recolonization events only since 1991
       ext_events = matrix(0,nrow=1,ncol=17-1)
       recol_events = matrix(0,nrow=1,ncol=17-1)
       for (j in 1:(17-1)){
