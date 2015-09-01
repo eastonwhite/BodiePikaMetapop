@@ -52,7 +52,7 @@ trial_sampled_pop=list()
 
 #Run model numerous times
 for (k in 1:trials){
-  source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/SimpleBodieModel_model.R")
+  source("SimpleBodieModel_model.R")
   
   ######take measurements of model#####
   #APika_sample=APika #for long sample
@@ -80,9 +80,9 @@ for (k in 1:trials){
   trial_pop[[k]]=APika
   
   
-  ext_events = matrix(0,nrow=1,ncol=17-1)
-  recol_events = matrix(0,nrow=1,ncol=17-1)
-  for (j in 1:(17-1)){
+  ext_events = matrix(0,nrow=1,ncol=20-1)
+  recol_events = matrix(0,nrow=1,ncol=20-1)
+  for (j in 1:(20-1)){
     ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
     recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
   }
@@ -133,7 +133,7 @@ two_trial_sampled_pop=list()
 
 #Run model numerous times
 for (k in 1:trials){
-  source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/SimpleBodieModel_model.R")
+  source("SimpleBodieModel_model.R")
   
   ######take measurements of model#####
   #APika_sample=APika #for long sample
@@ -160,9 +160,9 @@ for (k in 1:trials){
   two_trial_pop[[k]]=APika
   
   
-  ext_events = matrix(0,nrow=1,ncol=17-1)
-  recol_events = matrix(0,nrow=1,ncol=17-1)
-  for (j in 1:(17-1)){
+  ext_events = matrix(0,nrow=1,ncol=20-1)
+  recol_events = matrix(0,nrow=1,ncol=20-1)
+  for (j in 1:(20-1)){
     ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
     recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
   }
@@ -217,7 +217,7 @@ three_trial_sampled_pop=list()
 
 #Run model numerous times
 for (k in 1:trials){
-  source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/SimpleBodieModel_model.R")
+  source("SimpleBodieModel_model.R")
   
   ######take measurements of model#####
   #APika_sample=APika #for long sample
@@ -244,9 +244,9 @@ for (k in 1:trials){
   three_trial_pop[[k]]=APika
   
   
-  ext_events = matrix(0,nrow=1,ncol=17-1)
-  recol_events = matrix(0,nrow=1,ncol=17-1)
-  for (j in 1:(17-1)){
+  ext_events = matrix(0,nrow=1,ncol=20-1)
+  recol_events = matrix(0,nrow=1,ncol=20-1)
+  for (j in 1:(20-1)){
     ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
     recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
   }
@@ -298,7 +298,7 @@ four_trial_sampled_pop=list()
 
 #Run model numerous times
 for (k in 1:trials){
-  source("~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel/SimpleBodieModel_model.R")
+  source("SimpleBodieModel_model.R")
   
   ######take measurements of model#####
   #APika_sample=APika #for long sample
@@ -325,9 +325,9 @@ for (k in 1:trials){
   four_trial_pop[[k]]=APika
   
   
-  ext_events = matrix(0,nrow=1,ncol=17-1)
-  recol_events = matrix(0,nrow=1,ncol=17-1)
-  for (j in 1:(17-1)){
+  ext_events = matrix(0,nrow=1,ncol=20-1)
+  recol_events = matrix(0,nrow=1,ncol=20-1)
+  for (j in 1:(20-1)){
     ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
     recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
   }
@@ -339,15 +339,7 @@ for (k in 1:trials){
 }
 
 
-# save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,
-#      trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,
-#      trial_error,trial_sampled_pop,trial_pop,two_trial_mean,two_trial_mean_sd,two_trial_variance,two_trial_ext_year,
-#           two_trial_occupancy,two_trial_occupancy_sd,two_trial_ext_events,two_trial_recol_events,
-#           two_trial_error,two_trial_sampled_pop,two_trial_pop,three_trial_mean,three_trial_mean_sd,three_trial_variance,three_trial_ext_year,
-#           three_trial_occupancy,three_trial_occupancy_sd,three_trial_ext_events,three_trial_recol_events,
-#           three_trial_error,three_trial_sampled_pop,three_trial_pop,four_trial_mean,four_trial_mean_sd,four_trial_variance,four_trial_ext_year,
-#           four_trial_occupancy,four_trial_occupancy_sd,four_trial_ext_events,four_trial_recol_events,
-#           four_trial_error,four_trial_sampled_pop,four_trial_pop,file='FourModelExperiment_1000trials500years.Rdata')
+save(IC,trials,r,d_m,u,d_prop,max.time,trial_mean,trial_mean_sd,trial_variance,trial_ext_year,trial_occupancy,trial_occupancy_sd,trial_ext_events,trial_recol_events,trial_error,trial_sampled_pop,trial_pop,two_trial_mean,two_trial_mean_sd,two_trial_variance,two_trial_ext_year,two_trial_occupancy,two_trial_occupancy_sd,two_trial_ext_events,two_trial_recol_events,two_trial_error,two_trial_sampled_pop,two_trial_pop,three_trial_mean,three_trial_mean_sd,three_trial_variance,three_trial_ext_year,three_trial_occupancy,three_trial_occupancy_sd,three_trial_ext_events,three_trial_recol_events,three_trial_error,three_trial_sampled_pop,three_trial_pop,four_trial_mean,four_trial_mean_sd,four_trial_variance,four_trial_ext_year,four_trial_occupancy,four_trial_occupancy_sd,four_trial_ext_events,four_trial_recol_events,four_trial_error,four_trial_sampled_pop,four_trial_pop,file='FourModelExperiment_1000trials500years.Rdata')
 
 
 #####################################################################
