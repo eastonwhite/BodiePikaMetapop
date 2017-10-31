@@ -11,3 +11,6 @@ old_result_outputs/*
 *.tex
 *.bbl
 Census_Map_Time/*
+*.DS_Store
+*.RDataTmp
+symbols.R
