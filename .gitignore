@@ -8,7 +8,17 @@ Plots/*
 old_result_outputs/*
 *.tex
 *.bbl
+*.aux
+*.log
+*.out
+*.gz
+*.toc
 Census_Map_Time/*
 *.DS_Store
 *.RDataTmp
 symbols.R
+ecology.csl
+plainnatecology.bst
+test-code.R
+code_for_ext_plot_w_error_bars.R
+Model_Outputs/old_outputs/*
