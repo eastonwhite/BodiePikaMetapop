@@ -1,0 +1,901 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+2018
+\vspace{1cm}
+
+\begin{centering}
+ \textbf{Supplementary Material: The role of spatial structure in the collapse of regional metapopulations}
+ 
+ \vspace{2 mm}
+ 
+\textsc{Easton R. White$^{1,3}$} and \textsc{Andrew T. Smith$^2$} 
+\vspace{3 mm}
+
+
+
+\emph{$^1$ Center for Population Biology, University of California, Davis, California 95616 USA
+ \\ $^2$ School of Life Sciences, Arizona State University, Tempe, Arizona, 85287 USA
+}
+\vspace{2 mm}
+
+$^3$Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+\end{centering}
+
+\vspace{2 mm}
+
+\tableofcontents
+
+\vspace{1cm}
+
+Data and code for all the figures and tables can be found at (https://github.com/erwhite1/BodiePikaMetapop). All the analyses were run in R [@RCoreTeam2017].
+
+
+\clearpage
+
+\linenumbers
+
+\section{Expanded methods}
+\subsection{Additional study site background information}
+
+American pikas (\emph{Ochotona princeps}) are obligate talus (broken up pieces of rock) dwellers. At Bodie, Mono County, California (38.19 – 38.22 N; -118.99 – -119.01 W), pikas inhabit ore dumps from previous mining activity (Fig. \ref{fig:bodie_map}). The ore dumps differ in their size and spacing (Fig. \ref{fig:bodie_map}). It is believed that pika populations from adjacent lava rock outcrops were the source of the pikas that eventually occupied the Bodie ore dumps, although we have no solid records of when this transition occurred. The heyday of mining at Bodie occurred from 1878-1881, and ore dumps that appear identical to those occupied by pikas today were present in 1879 in the earliest known photograph of Bodie [@Wedertz1969]. The general spatial configuration of the ore dump patches is like a figure-8, such that there are relatively distinct northern and southern constellations of patches (see @Smith2015). Nevertheless, many patches in the north and south are in close proximity (Fig. \ref{fig:bodie_map}).
+
+\subsection{Model description}
+Let $\mathbf{x}(n)$ be the total number of pikas at Bodie at census time $n$, where $n \in \{0,1,2,\ldots\}$. We denote the total number of pikas on a given patch, $j$, as $x_j(n),\, j \in \{1,2,3,\ldots,79\}$. Note that all pikas in a given census are considered breeding adults because juvenile pikas that survive their first year are then capable of reproduction. To match the timing of the actual Bodie census, we assume our model census takes place in late summer or early fall when abundance is highest [@Smith74a; @Smith2015]. <!--We also assume that adults do not disperse and that juveniles only get one opportunity to disperse. We model fecundity using available litter size data and mortality as binomial random variables. We assume dispersal is a piece-wise function of distance between patches governed by a multinomial random variable. -->
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{SimpleBodieModel_SuppMaterial_files/figure-latex/Bodie_mapLAYOUT_EW3.pdf}
+\caption{Map of the Bodie study site. Black dots indicate a patch location and black dot size is proportional to the number of potential territories on that patch.\label{fig:bodie_map}}
+\end{figure}
+
+
+
+
+
+
+
+\subsection{Fecundity}
+We assume an equal sex ratio and that all females are able to reproduce in a given year [@Smith1983]. Let $R_f$ be a random variable describing the number of females born to a reproducing female, $f$, in a given year. In our study, we use actual litter size (mean = 3.3 young/litter) data from past studies (litter size determined from counts of mature embryos in pregnant females) [@Smith1978]. Specifically, the probability of a litter of sizes 1 through 5 are 0.02326, 0.2093, 0.3256, 0.3256, and 0.1163, respectively. This is higher than other North American pika populations (range 2.3 – 3.1; @Smith1978). We assume that all breeding females, regardless of age (all breeding pikas have the same average litter size independent of age) or location, have a litter size drawn from this distribution [@Millar1974, @Smith1978]. Pika mothers initiate two litters per year, but normally only one is successfully weaned [@Millar1974;@Smith1983]. Because pikas are able to reproduce after their first year, we let $B_j(n)$ represent the total reproductive output of the entire patch in year $n$. In the model we track the total number of pikas, not just females, to better compare to field data. Therefore, in the model we assume a patch has a 50:50 ratio of males and females. In the case of an odd number, we flip a coin to determine the sex of the odd-numbered pika. 
+\begin{equation}
+ B_j(n) = \sum_{f=1}^{\mathbf{x}(n-1)} R_f
+\end{equation}
+
+After reproduction occurs, there is some loss of juvenile pikas during weaning. @Millar1974 estimated that 21% of juvenile pikas may die during this period. His work took place at a high altitude site in Alberta. We do not have a similar estimate for pikas at Bodie. Therefore we estimated the probability of weaning mortality using an inverse modeling approach (see next section). The number of pikas that die due to weaning mortality is calculated using a binomial random variable with probability set at the value we estimated using the inverse modeling approach. 
+
+
+
+
+\subsection{Dispersal}
+After juveniles pikas are born, a subset of them disperse to a new patch. Non-dispersing individuals, compete for territories (can only obtain a territory if one is unoccupied) on their natal patch. If these individuals cannot obtain an empty territory by winter, they will die. The number of pikas allowed to disperse is governed by a binomial random variable with rate, $c$=0.25 [@Smith1987]. The simplest assumption to make is that pikas can only disperse to nearby patches (within 300 meters; @Smith74a; @PeacockSmith1997). Let $D_j(n)$ denote the number of dispersing pikas from a particular patch $j$ in year $n$. We denote $c$ to be the mean dispersal propensity for an individual pika. We assume $D_j(n)$ to be a binomial random variable that has the probability distribution
+\begin{equation}
+  \Pr(\{D_j(n) = d \}) = {B_j(n) \choose d} c^d (1-c)^{B_j(n) - d}, \hspace{2ex} d \in \{0,1,\ldots,B_j(n)\}.
+\end{equation}
+Each of the dispersing pikas, from $D_j(n)$, then disperses away from their natal patch to a target patch. The probability an individual pika targets a particular patch $i$ from their natal patch $j$ is the same for all patches within $r$=300 meters of the natal patch $j$, and zero for all other patches. Here $B_j(n)$ is the total reproductive output of patch $j$ in year $n$ as defined in the previous section on fecundity.
+
+We let $U_i$, where $i \in \{1,2,\ldots,79\}$ be a multinomially-distributed random variable for dispersing a pika from natal patch $j$ to one of 79 possibilities.  
+\begin{equation}
+Pr(\{U_1 = u_1, U_2 = u_2, \ldots, U_{79}= u_{79}\}) = \frac{79!}{u_1!\ldots u_{79}!} p_{j1}^{u_1}\ldots p_{j79}^{u_{79}}
+\end{equation}
+
+
+Once a dispersing pika is assigned a target patch, the disperser also endures a probability of mortality while dispersing. We denote $Y_i$ to be the number the number of pikas who chose a particular patch $i$. We assume $Y_i$ to be a binomial random variable that has the following probability distribution according to the probability rate $d_m$=0.61. This value was chosen by an inverse pattern-orientated approach (see next section).
+\begin{equation}
+  \Pr(\{Y_i = y \}) = {U_i \choose y} d_m^y (1-d_m)^{U_i - y}, \hspace{2ex} y \in \{0,1,\ldots, U_i\}.
+\end{equation}
+
+\subsection{Competition for territories}
+Pikas that survive dispersal then compete for territories on their new patches. We assume that if no territories are vacant on their given patch, they are not able to acquire a territory and subsequently die during winter. In the case where there are vacant territories, these pikas fill open territories. Any pikas without a territory after this time also die during winter. This same process for acquiring territories is also used for non-dispersing juveniles that remain on their natal patch. 
+
+\subsection{Adult mortality}
+Adult pikas endure some probability of mortality throughout the entire year. We denote the constant probability of mortality as $\mu$ and define $M_j(n)$ to be a random variable representing number of deaths at a particular patch $j \in \{1,2,\ldots,79\}$. Then
+\begin{equation} \label{mort_pdf}
+  \Pr(\{M_j(n) = m \}) = {x_j(n) \choose m} \mu^m (1-\mu)^{x_j - m}, \hspace{2ex} m \in \{0,1,\ldots,x_j(n)\}.
+\end{equation}
+
+We assume that all pikas that acquire a territory have enough time to build a haypile and survive until winter. All individuals endure an over-winter probability of mortality. We also assume that over-winter mortality rate is invariant across the study site. Our mortality estimates come from static life tables based on the age structure of collected pikas at Bodie; each animal’s age was determined by counting the annual adhesion lines in the diastema of the lower jaw of collected pikas [@Smith74a]. Average mortality of adults at Bodie was 37% (average $q_x$ values of 1-4 year old pikas) or 36% (based on percentage yearlings), thus mortality was lower at Bodie than any other North American pika population (range: 44-45%; @Smith1978).
+
+
+
+
+
+
+\section{Estimation of weaning mortality and disperser mortality probabilities}
+
+
+```{r,echo=FALSE}
+#setwd('~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel')
+#bibliography: White_bib.bibtex
+#Need to run models here, or pull in model outputs
+sampled_census_bodie <- read.table("Scripts/sampled_census_bodie.txt",header=T,sep= "\t")
+names(sampled_census_bodie) <- c(1972,1977,1989,1991,1992,1993,1994,1995,1996,      1997,1998,1999,2000,2001,2003,2004,2005, 2006,2008,2009,2010)
+```
+
+```{r,eval=TRUE,message=FALSE,echo=FALSE,fig.width=5,fig.height=5,fig.cap="Mean squared error versus dispersal mortality probability and weaning mortality probability for default parameter values (see main text). The color indicates the mean squared error of simulated abundances compared to the field census. The intersection of the vertical and horizontal lines indicate the combination of weaning and dispersal mortality probabilities with the lowest mean squared error.\\label{fig:inverse_modeling}"}
+# load("inverse_modeling_1000trials.Rdata")
+# par(mfrow=c(1,1), mai = c(1.5, 1, 0.5,0.5),oma=c(0.5,1.5,0,0))
+# plot(d_m_vector,trial_trial_error, pch=16,col='black',ylab='Mean squared error',
+#      xlab='Dispersal mortality probability',ylim=c(20000,45000))
+# prediction=loess(as.numeric(trial_trial_error)~as.numeric(d_m_vector))
+# lines(seq(0.01,0.99,0.001),predict(prediction,data.frame(d_m_vector=seq(0.01,0.99,0.001))),col='red',lwd=2)
+#which(round(predict(prediction,data.frame(d_m_vector=seq(0.01,0.99,0.001))))==21106)
+load("Model_Outputs/inverse_modeling_50trials.Rdata")
+require(lattice)
+
+min_value_location = which(trial_trial_error==min(trial_trial_error))
+
+levelplot(trial_trial_error~d_m_vector*weaning_m_vector,col.regions = terrain.colors(1000),cuts=25,ylab="Weaning mortality probability",xlab="Dispersal mortality probability",
+panel = function(...){ 
+  panel.levelplot(...) 
+  panel.abline(h = weaning_m_vector[min_value_location],lwd = 2,type = 2) 
+  panel.abline(v = d_m_vector[min_value_location],lwd = 2,type = 2) }
+          )
+#abline(h=0.52,lty=2,lwd=2)
+```
+
+
+
+
+Although the importance of the cost of dispersal in driving dynamics at Bodie has been noted by several authors [@Smith74a; @PeacockSmith1997; @Smith2015], we still do not have a good field estimate of the parameter. During dispersal, juvenile pikas are often chased off patches by established adults, killed by predators, and have to endure high summer temperatures [@Smith74a; @PeacockSmith1997; @Smith2015]. 
+
+We used our simulation model and an inverse pattern-orientated approach to estimate disperser mortality probability and the probability of mortality during weaning [@Hartig2011; @White2014]. Essentially, we ran our simulation model with different combinations of dispersal mortality probabilities and weaning mortality probabilities. We then compared model outputs to census data. Here is a more detailed explanation of our approach:
+
+1. We initialized our model with census data from the year 1991 and the other parameter values we have estimated in the field. We initialized the model with 1991 census data because the period between 1991 and 2010 is the most continuous set of census data we have for Bodie. 
+2. We then ran the model 50 times for each different values of disperser mortality probability and weaning mortality probability.
+3. For each parameter combination, we calculated the mean squared difference between the total census size and the total census size predicted by our model for the subset of census years from 1991 to 2010.
+4. Our estimated disperser mortality probability and weaning mortality probability are the values that minimized this mean squared difference (see Fig. \ref{fig:inverse_modeling}). 
+5. We then used these probability estimates in the model with initial conditions from the year 1972 throughout our paper.
+
+We found that a disperser mortality probability of `r d_m_vector[min_value_location]` and a weaning mortality probability of `r weaning_m_vector[min_value_location]` minimized the mean squared error between our predicted total population size and the census data. The high weaning mortality probability falls in line with past work [@Smith74a]. He determined a first-year mortality rate (which combines weaning mortality and over-winter mortality) of 0.889 [@Smith74a]. 
+
+Our approach assumes that these mortality probabilities are constant through time and space. It is possible that dispersal mortality rate has increased or fluctuated over time. While individual patch extirpations in the south did not appear related to increasing temperatures, the inability of pikas to disperse from the populated northern constellation of ore dumps to the south in recent years may have been due to documented global warming at Bodie [@Smith2015]. 
+
+\pagebreak 
+
+\section{Parsing out the effects of spatial structure and patch heterogeneity}
+
+Spatial structure and patch size are both important components of metapopulation dynamics [@SmithGilpin1997]. At Bodie, patch size is the potential number of territories on each patch. For most of our simulations, we examine models with the actual Bodie spatial structure and the heterogeneity in number of territories per patch. However, it is also interesting to examine model outcomes when we relax these assumptions. Therefore, with a 2x2 full factorial design we examined the importance of these two assumptions: (1) no spatial structure (global dispersal, all patches are equally connected) and homogeneous patches (same number of territories per patch); (2) Bodie's spatial structure and homogeneous patches; (3) no spatial structure and heterogeneous patches; and (4) the actual Bodie spatial structure and heterogeneity in patches. We then made the same six measurements (e.g. patch occupancy) of these different models as we did in the rest of the paper. 
+
+
+
+```{r,echo=FALSE}
+####TABLE OF EXPERIMENT MODEL RESULTS####
+
+
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+ModelNames = c("Field Data","Bodie structure + heterogeneity","Bodie structure + homogeneity", "No spatial structure + heterogeneity","No spatial structure + homogeneity")
+TableHeaders= c('Mean pop. size','Variance','Patch occupancy', 'Collapse year', '# extinct. events','# recolon. events','Error')
+experiment=matrix(0,nrow=5,ncol=7)
+rownames(experiment)=ModelNames
+colnames(experiment)=TableHeaders
+
+# Calculate the number of extinction and recolonization events
+  ext_events = matrix(0,nrow=1,ncol=20)
+  recol_events = matrix(0,nrow=1,ncol=20)
+  for (j in 1:20){
+    ext_events[,j] = sum(sampled_census_bodie[,j]>0 & sampled_census_bodie[,j+1]==0,na.rm=T)
+    recol_events[,j] = sum(sampled_census_bodie[,j]==0 & sampled_census_bodie[,j+1]>0,na.rm=T)
+  }
+census_ext_events=sum(ext_events)
+census_recol_events=sum(recol_events)
+
+experiment[1,1:7]=c(mean(colSums(sampled_census_bodie,na.rm=T)),var(colSums(sampled_census_bodie,na.rm=T)),mean(colSums(sampled_census_bodie>0,na.rm=T)/66),as.numeric(names(which((colSums(sampled_census_bodie[c(2:19,21:37,57,58),]))<14)[1])),census_ext_events,census_recol_events,0)
+experiment[2:5,1]=c(mean(trial_mean),mean(two_trial_mean),mean(three_trial_mean),mean(four_trial_mean))
+experiment[2:5,2]=c(mean(trial_variance),mean(two_trial_variance),mean(three_trial_variance),mean(four_trial_variance))
+experiment[2:5,3]=c(mean(trial_occupancy),mean(two_trial_occupancy),mean(three_trial_occupancy),mean(four_trial_occupancy))
+experiment[2:5,4]=c(mean(trial_ext_year),mean(two_trial_ext_year),mean(three_trial_ext_year),mean(four_trial_ext_year))
+experiment[2:5,5]=c(mean(trial_ext_events),mean(two_trial_ext_events),mean(three_trial_ext_events),mean(four_trial_ext_events))
+experiment[2:5,6]=c(mean(trial_recol_events),mean(two_trial_recol_events),mean(three_trial_recol_events),mean(four_trial_recol_events))
+experiment[2:5,7]=c(mean(trial_error),mean(two_trial_error),mean(three_trial_error),mean(four_trial_error))
+
+library(knitr)
+kable(experiment[,1:4], digits=2,caption = 'Model outputs for four different scenarios of possible Bodie spatial structure and patch heterogeneity as compared to field data.')
+#kable(experiment[,5:7], digits=2)
+```
+
+
+
+```{r,echo=F, tidy=T,fig.cap='Comparison of four different simulation scenarios representing combinations of different spatial patterns and patch heterogeneities. The dashed horizontal line on each patch represents the actual measured value from the field. 1000 trials were run for each treatment. The legend apples to all four panels.\\label{fig:four_model_experiment_supp_mat}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+par(mfrow=c(2,2),mar=c(3,3.5,1,1),oma=c(2,2,0,0))
+boxplot(c(trial_mean),c(two_trial_mean),c(three_trial_mean),c(four_trial_mean),xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,200))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+mtext('Mean population size',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=87,lty=2,lwd=2)
+
+
+boxplot(c(trial_variance),c(two_trial_variance),c(three_trial_variance),c(four_trial_variance),xlab=' ',las=1,ylab=' ', outline=T, medlwd=0.7,outpch=20,boxlty=0, outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,3000))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch Homogeneity'), col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Variance in pop. size',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=860,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_occupancy),c(two_trial_occupancy),c(three_trial_occupancy),c(four_trial_occupancy),xlab=' ',las=1,ylab=' ',outline=T, medlwd=0.7,outpch=20, boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5), notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1), rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,1.2))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'), col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),pch=15)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+ #                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Patch occupancy',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=0.38,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_ext_year),c(two_trial_ext_year),c(three_trial_ext_year),c(four_trial_ext_year),
+        xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(1970,2500))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+ #                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Year of southern collapse',side=2,line=3,outer=F)
+mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=1990,lty=2,lwd=2)
+
+```
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Parameter sensitivity}
+
+Although we have good estimates for dispersal propensity, birth rates, maximum dispersal distance, and over-winter mortality probability, it is still insightful to test the sensitivity of these different parameters. We also tested the sensitivity of the disperser mortality probability and weaning mortality probability. These parameters were particularly important to examine as we estimated them from the model itself as described above. Therefore, we systematically varied each parameter and reran our simulations. We then made various measurements of the simulation outputs.
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model outputs to changes in weaning mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_weaning_m}'}
+load("Model_Outputs/ParameterSensitivity_100trials_weaning_m.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(weaning_m_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,300),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+points(weaning_m_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(weaning_m_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),ylim=c(1970,2000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Year of south collapse',side=2,line=3.1,outer=F,cex.lab=1.2)
+#abline(v=0.52,lty=2,lwd=2)
+
+mtext('Weaning mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in dispersal mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_d_m}'}
+load("Model_Outputs/ParameterSensitivity_100trials_d_m.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(d_m_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,200),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+points(d_m_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(d_m_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.1,outer=F,cex.lab=1.2)
+#abline(v=0.48,lty=2,lwd=2)
+
+mtext('Dispersal mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in dispersal propensity probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_d_prop}'}
+load("Model_Outputs/ParameterSensitivity_100trials_d_prop.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(d_prop_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,120),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+points(d_prop_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(d_prop_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=0.25,lty=2,lwd=2)
+
+mtext('Dispersal propensity probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in maximum dispersal radius. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_radius}'}
+load("Model_Outputs/ParameterSensitivity_100trials_radius.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(radius_vector,trial_trial_mean,pch=16,xlab='',ylim=c(0,120),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,xlim=c(0,1500))
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1500),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1500),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1500),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+points(radius_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1500),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+#plot(radius_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=300,lty=2,lwd=2)
+
+mtext('Max dispersal distance',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in over-winter mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_u}'}
+load("Model_Outputs/ParameterSensitivity_100trials_u.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(u_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,350),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,2500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+points(u_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+#plot(u_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=0.37,lty=2,lwd=2)
+
+mtext('Over-winter mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+\section{The role of mainland patches}
+
+Large patches in the northern half of the study area may serve as ``mainlands'' in a mainland-island system. To test this hypothesis, we reran our models with and without mainland patches. In the without mainland patches scenario, we simply set the three large northern patches (patch numbers 44, 64, and 65) to be average size patches. We then made a number of population dynamics measurements for the two scenarios (Fig. \ref{fig:mainland_experiment}). 
+
+```{r,echo=F,fig.cap='Measurements of model outputs where “mainland patches” were included or not included (assumed to be the size of an average patch) in simulations. The horizontal dashed lines represent measurements from field data.\\label{fig:mainland_experiment}'}
+#Easton R. White 
+#created 21-Mar-2016
+#Last edited 21-Mar-2016
+
+load("Model_Outputs/Mainland_Effect_1000trials.Rdata")
+
+#Plot for Mainland island removal experiment
+par(mfrow=c(2,2),mar=c(3,5,1,1),oma=c(2,0.5,0,0))
+boxplot(c(trial_mean),c(no_mainlands_mean),xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,180))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+mtext('Mean population size',side=2,line=3,outer=F,cex=1)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=87,lty=2,lwd=2)
+
+
+boxplot(c(trial_variance),c(no_mainlands_variance),xlab=' ',las=1,ylab=' ', outline=T, medlwd=0.7,outpch=20,boxlty=0, outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,1500))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch Homogeneity'), col=c(rgb(0.3,0.3,0.3,1)),pch=15)
+
+mtext('Variance in pop. size',side=2,line=3.8,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=860,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_occupancy),c(no_mainlands_occupancy),xlab=' ',las=1,ylab=' ',outline=T, medlwd=0.7,outpch=20, boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5), notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,1))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'), col=c(rgb(0.3,0.3,0.3,1)),pch=15)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+#                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Patch occupancy',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=0.38,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_ext_year),c(no_mainlands_ext_year),
+        xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(1970,2080))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+#                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Year of southern collapse',side=2,line=3.8,outer=F)
+mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=1989,lty=2,lwd=2)
+
+
+```
+
+
+\pagebreak
+
+
+
+\section{Degraded patches}
+
+@Smith2015 suggested that several patches with old pika sign in 1972 may no longer be habitable. Although these patches had sign of previous occupancy by pikas in 1972, no pikas have been observed on these patches since. These include patches numbers `r paste(which(rowSums(sampled_census_bodie)==0), sep=',')`, all of which are in the southern constellation. We ran the simulation with and without these patches to understand their effect on overall population dynamics. We found that including these degraded patches delayed the extinction of the southern area and the Bodie site as a whole (Fig. \ref{fig:subset_patches}). The qualitative results are the same whether or not we include these `r length(which(rowSums(sampled_census_bodie)==0))` patches. Therefore, we left these patches in the model for the results in the main manuscript.
+
+```{r, echo=F, fig.height=5,fig.width=5,fig.cap='The distribution of southern extinction times for the model with all patches included (presented in the main manuscript), or a subset of patches with the potentially "degraded" patches removed.\\label{fig:subset_patches}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+
+    par(mfrow=c(1,1), mai = c(1, 1.3, 0,0),oma=c(0.1,0.1,1.4,0.8))
+    all_patches <- density(trial_ext_year)
+    plot(all_patches,main=" ",las=1, xlim=c(1960,2100),ylab=" ",xlab=' ',ylim=c(0,0.04),cex.axis=1.2,col=rgb(0.1,0.5,0.5,0.3))
+    polygon(all_patches, col=rgb(0.1,0.5,0.5,0.3),  
+              border=rgb(0.1,0.5,0.5,0.3))
+ 
+    abline(v=1989,lty=2,lwd=2)
+    mtext('Frequency',side=2,line=5,cex=1.4)
+    mtext('Year of southern collapse',side=1,line=3,cex=1.4)
+    #mtext('a',side=3,line=0.3,outer=F,cex=1.4,at=1960,lty=2)
+    
+    
+load("Model_Outputs/FourModelExperiment_1000trials1000years_subset_patches.Rdata")  
+    subset_patches <- density(trial_ext_year)
+    points(subset_patches,cex.axis=1.2,col=rgb(0.8,0.5,0.5,0.3),type='l')
+    polygon(subset_patches, col=rgb(0.8,0.5,0.5,0.3),  
+              border=rgb(0.8,0.5,0.5,0.3))
+    
+legend('topright',legend=c('all patches','subset of patches'), col=c(rgb(0.1,0.5,0.5,0.3), rgb(0.8,0.5,0.5,0.3)), pch=15,cex=1.6,bty='n')    
+```
+
+
+
+<!--
+\section{The effects of not sampling every patch}
+
+As discussed in the main text, not every patch was sampled consistently through the entire census period. Therefore, in all of oyr analyses and figures, both in the main text and in the supplementary material, we sampled our model's patches similarly to what was done in the field. In other words, we only sampled model patches, if they were also sampled in the field. A total of 13 patches were not sampled consistently. These patches still contribute to overall population dynamics, so they were still included in the model and simply not sampled. Time series plots in the main text and elsewhere show a model census of only sampled patches---to allow for comparison to field data. However, we can also compare the effect of not having sampled these patches.
+
+```{r,echo=FALSE,eval=F, fig.cap='Comparison of model when unsampled patches are either included (left) or excluded (right) in abundance estimates. The black dots represent field census data.'}
+
+#could rerun model with just basic actual Bodie setup
+load("Model_Outputs/Modeloutput_500years_dm048_wm0.52_1000trials_longcensus.Rdata")
+par(mfcol=c(3,2), mai = c(0.05, 1, 0,0),oma=c(5,1,5,0.8))
+j=1
+model_allpatch_census=trial_pop[[j]]
+mean_matrix=colSums(model_allpatch_census[1:79,],na.rm=T)
+plot(1972:2471,colSums(model_allpatch_census[1:79,],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='Total',xaxt='n',las=1,xlim=c(1970,2010))
+for (j in 2:50){
+model_allpatch_census=trial_pop[[j]]
+points(1972:2471,colSums(model_allpatch_census[1:79,],na.rm=T),type='l',col='grey',ylim=c(0,100))
+mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[1:79,],na.rm=T))
+}
+
+#points(1972:2471,colMeans(mean_matrix),lwd=3,col='black',type='l')
+
+######################################################
+j=1
+model_allpatch_census=trial_pop[[j]]
+mean_matrix=colSums(model_allpatch_census[c(38:56,59:79),],na.rm=T)
+plot(1972:2471,colSums(model_allpatch_census[c(38:56,59:79),],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='North',xaxt='n',las=1,xlim=c(1970,2010))
+for (j in 2:50){
+model_allpatch_census=trial_pop[[j]]
+points(1972:2471,colSums(model_allpatch_census[c(38:56,59:79),],na.rm=T),type='l',col='grey',ylim=c(0,100))
+mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(38:56,59:79),],na.rm=T))
+}
+
+#points(1972:2471,colMeans(mean_matrix),lwd=3,col='black',type='l')
+
+######################################################
+j=1
+model_allpatch_census=trial_pop[[j]]
+mean_matrix=colSums(model_allpatch_census[c(1:37,57,58),],na.rm=T)
+plot(1972:2471,colSums(model_allpatch_census[c(1:37,57,58),],na.rm=T),type='l',col='grey',ylim=c(0,100),ylab='South',las=1,xlim=c(1970,2010))
+for (j in 2:30){
+model_allpatch_census=trial_pop[[j]]
+points(1972:2471,colSums(model_allpatch_census[c(1:37,57,58),],na.rm=T),type='l',col='grey',ylim=c(0,100))
+mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(1:37,57,58),],na.rm=T)) 
+}
+
+#points(1972:2471,colMeans(mean_matrix),lwd=3,col='black',type='l')
+
+################################################################
+################################################################
+################################################################
+################################################################
+par(mai = c(0.05, 0.5, 0,0.5))   
+j=1
+model_census=trial_sampled_pop[[j]]
+mean_matrix=colSums(model_census[1:79,],na.rm=T)
+plot(1972:2471,colSums(model_census[1:79,],na.rm=T),type='l',ylim=c(0,250),ylab=' ',las=1,col=rgb(0.5,0.5,0.5,0.5),xaxt='n',xlim=c(1970,2010))
+for (j in 2:50){
+model_census=trial_sampled_pop[[j]]
+points(1972:2471,colSums(model_census[1:79,],na.rm=T),type='l',ylim=c(0,100),col=rgb(0.5,0.5,0.5,0.5))
+mean_matrix=rbind(mean_matrix,colSums(model_census[1:79,],na.rm=T))
+
+}
+
+points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[1:79,1:20],na.rm=T),pch=16,col='black')
+
+######################################################################
+######################################################################
+
+j=1
+model_census=trial_sampled_pop[[j]]
+mean_matrix=colSums(model_census[c(38:56,59:79),],na.rm=T)
+plot(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',ylim=c(0,250),ylab=' ',xaxt='n',col=rgb(0.5,0.5,0.5,0.5),las=1,xlim=c(1970,2010))
+for (j in 2:50){
+model_census=trial_sampled_pop[[j]]
+points(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+mean_matrix=rbind(mean_matrix,colSums(model_census[c(38:56,59:79),],na.rm=T))
+}
+
+
+points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(38:56,59:79),1:20],na.rm=T),pch=16,col='black')
+
+######################################################################
+
+j=1
+model_census=trial_sampled_pop[[j]]
+mean_matrix=colSums(model_census[c(1:37,57,58),],na.rm=T)
+plot(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100),ylab='  ',xlim=c(1970,2010),las=1)
+for (j in 2:50){
+model_census=trial_sampled_pop[[j]]
+points(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+mean_matrix=rbind(mean_matrix,colSums(model_census[c(1:37,57,58),],na.rm=T))
+}
+
+
+points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(1:37,57,58),1:20],na.rm=T),pch=16,col='black')
+#abline(h=14,lwd=2,lty=2)
+
+mtext('Population size (# of individuals)',side = 2,outer = TRUE,line=-1)
+  mtext('Time (years)',side = 1,outer = TRUE,line=2.6,at=0.49)
+  mtext('All patches',side = 3,outer = TRUE,line=1,at=0.31)
+  mtext('Only sampled patches',side = 3,outer = TRUE,line=1,at=0.75)
+  
+```
+-->
+  
+  
+  
+  \pagebreak
+  
+\section{Long-term trends}
+  
+In the main manuscript, we presented results comparing the model to census data starting in 1972. We also examined model predictions into the future. We see that the northern population of pikas in Bodie rarely goes extinct in model projections (Fig. \ref{fig:long_term_trends}). Conversely, the southern area population usually goes extinct within a couple of decades (Fig. \ref{fig:long_term_trends}). Here we still assume that pikas can only move a maximum of 300 meters [@Smith74a]. On longer time-scales long-distance dispersal events may be more important. For example, there is one recent report of a pika at Bodie having successfully colonized an isolated patch a minimum of 1.2 km from the nearest source population [@Nichols2016].
+
+```{r,echo=FALSE,eval=T, fig.cap='Projected long-term dynamics of pikas at Bodie, California. Individual grey lines denote individual model runs and the dark black line is the average population size across 1000 trials.\\label{fig:long_term_trends}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+    par(mfcol=c(3,1), mai = c(0.05, 1, 0,0),oma=c(5,1,5,0.8))
+
+  
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[1:79,1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[1:79,1:300],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='Total',xaxt='n',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[1:79,1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[1:79,1:300],na.rm=T))
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ######################################################
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='North',xaxt='n',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T))
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ######################################################
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100),ylab='South',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T)) 
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ################################################################
+  ################################################################
+  ################################################################
+  ################################################################
+  
+  # Plot sampled populations only
+  
+  # par(mai = c(0.05, 0.5, 0,0.5))   
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[1:79,1:300],na.rm=T)
+  # plot(1972:2271,colSums(model_census[1:79,1:300],na.rm=T),type='l',ylim=c(0,250),ylab=' ',las=1,col=rgb(0.5,0.5,0.5,0.5),xaxt='n',xlim=c(1970,2270))
+  # for (j in 2:30){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[1:79,1:300],na.rm=T),type='l',ylim=c(0,100),col=rgb(0.5,0.5,0.5,0.5))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[1:79,1:300],na.rm=T))
+  #   
+  # }
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[1:79,1:21],na.rm=T),pch=16,col='black')
+  # 
+  # ######################################################################
+  # ######################################################################
+  # 
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[c(38:56,59:79),],na.rm=T)
+  # plot(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',ylim=c(0,250),ylab=' ',xaxt='n',col=rgb(0.5,0.5,0.5,0.5),las=1,xlim=c(1970,2270))
+  # for (j in 2:50){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[c(38:56,59:79),],na.rm=T))
+  # }
+  # 
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(38:56,59:79),1:20],na.rm=T),pch=16,col='black')
+  # 
+  # ######################################################################
+  # 
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[c(1:37,57,58),],na.rm=T)
+  # plot(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100),ylab='  ',xlim=c(1970,2270),las=1)
+  # for (j in 2:50){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[c(1:37,57,58),],na.rm=T))
+  # }
+  # 
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(1:37,57,58),1:20],na.rm=T),pch=16,col='black')
+  # #abline(h=14,lwd=2,lty=2)
+  
+  mtext('Population size (# of individuals)',side = 2,outer = TRUE,line=-1)
+  mtext('Time (years)',side = 1,outer = TRUE,line=2.6,at=0.6)
+  #mtext('All patches',side = 3,outer = TRUE,line=1,at=0.31)
+  #mtext('Only sampled patches',side = 3,outer = TRUE,line=1,at=0.75)
+  
+```
+
+  
+```{r,tidy=T,echo=FALSE,include=F,eval=F}
+  #this chuck calculates the proportion of patches that went extinct by a future time  
+# load("Model_Outputs/Modeloutput_500years_dm048_wm0.52_1000trials_longcensus.Rdata")
+#    par(mfrow=c(1,1),mar=c(3,3,1,1),oma=c(2,2,0,0))
+#   end_times = seq(10,500,by=10)
+#   Prop_Ext=matrix(0,nrow=1,ncol=length(end_times))
+#   for (k in 1:length(end_times)){
+#     end_pop_size=rep(0,times=1000)
+#     
+#     for (j in 1:1000){
+#       model_allpatch_census=trial_pop[[j]]
+#       end_pop_size[j] = colSums(model_allpatch_census)[end_times[k]]
+#     }
+#     end_pop_size[end_pop_size>0]=1
+#     Prop_Ext[k]=1- (sum(end_pop_size)/1000)
+#     
+#   }
+#   
+#   plot(end_times,Prop_Ext,ylab=" ",xlab=" ",las=1,pch=16,ylim=c(0,0.4),cex.axis=1.2)
+#       mtext('Probability of extinction',side=2,line=3,cex=1.2)
+#     mtext('Time (years)',side=1,line=3,cex=1.2)
+    
+```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!--
+  \pagebreak
+  
+\section{Individual patch dynamics}
+  
+  In addition to examining overall metapopulation trends over time, it is also useful to examine the dynamics of each patch over time. This is best illustrated on the landscape of patches. In figure \ref{fig:territory_map}, we show the Bodie landscape where patch size is proportional to the number of territories. We also illustrate patch level dynamics with patch size proportional to the patch population size in each year (Fig. \ref{fig:patch_dynamics})
+  
+```{r, fig.width=3,fig.height=6,echo=FALSE,fig.cap='Territory size is represented by the size of the circles for each patch.\\label{fig:territory_map}'}
+  #should maintain proper figure margins
+  territories=c(6,5,3,7,3,4,3,4,5,5,5,3,3,4,3,3,4,4,3,3,
+                5,5,3,3,3,4,4,3,3,2,3,4,3,3,4,3,5,5,9,3,5,
+                5,4,14,4,5,5,7,13,4,3,3,3,4,2,5,11,12,3,13,
+                14,13,7,15,13,3,12,7,4,4,3,5,16,10,3,4,11,12,3)
+ #territories[which(rowSums(sampled_census_bodie)==0)]=0
+  
+  par(mfcol=c(1,1), mai = c(0.7, 0.7, 0.7,0.7),oma=c(0,0,0,0))
+  disp1<-read.table('Scripts/patch_coordinates.txt',header=TRUE)
+  col_seq=rep(gray.colors(2,start=0.1,end=0.5,alpha=0.2)[1],times=79)
+  col_seq[c(1:19,21:23,57,58)]=gray.colors(2,start=0.1,end=0.5,alpha=0.2)[2]
+  symbols(disp1$xcoor1,disp1$ycoor1,circles=territories,inches=1/5, ann=F, bg=col_seq, fg='black',ylim=c(0,4000),xlim=c(0,2000),main=)
+  text(disp1$xcoor1,disp1$ycoor1, labels = 1:79, cex=0.38,pos=4) 
+  abline(h=2330,lty=2)
+```    
+  
+  
+```{r, fig.width=10,fig.height=16,echo=FALSE, fig.cap='Size of patches over time for census data. The size of the circles represent the number of individuals per patch.\\label{fig:patch_dynamics}'}
+  
+  par(mfrow=c(3,7), mai = c(0, 0, 0,0),oma=c(1,1,1,1))
+  disp1<-read.table('Scripts/patch_coordinates.txt',header=TRUE)
+  col_seq=rep(gray.colors(2,start=0.1,end=0.5,alpha=0.2)[1],times=79)
+  col_seq[c(1:19,21:23,57,58)]=gray.colors(2,start=0.1,end=0.5,alpha=0.2)[2]
+  
+  # I shoud make patches with 0 pikas look different than those with 1 or more
+  sampled_census_bodie[sampled_census_bodie==0]=NA
+  
+  for (q in 1:21){
+    symbols(disp1$xcoor1,disp1$ycoor1,circles=sampled_census_bodie[,q],inches=1/5, bg=col_seq, fg='black',ylim=c(0,4000),xlim=c(0,2000),main=" ",ylab=" ",xlab=" ",xaxt='n',yaxt='n')
+    mtext(text=(names(sampled_census_bodie)[q]), side=1,line=-2,outer=F)
+    abline(h=2330,lty=2)
+    #text(disp1$xcoor1,disp1$ycoor1, labels = 1:79, cex=0.38,pos=4) 
+    
+  }
+  
+  
+#this code creates indivdual plots for each census year
+#   for (q in 1:20){
+#   pdf(file=paste((names(sampled_census_bodie)[q]),'Bodie','.pdf',sep=''),width = 3,height=6)
+#   symbols(disp1$xcoor1,disp1$ycoor1,circles=sampled_census_bodie[,q],inches=1/5, bg=col_seq, fg='black',ylim=c(0,4000),xlim=c(0,2000),main=" ",ylab=" ",xlab=" ",xaxt='n',yaxt='n')
+#   mtext(text=(names(sampled_census_bodie)[q]), side=1,line=-2,outer=F)
+#   abline(h=2330,lty=2)
+#   #text(disp1$xcoor1,disp1$ycoor1, labels = 1:79, cex=0.38,pos=4) 
+#   dev.off()
+# }
+```    
+  
+  
+  -->
+  \pagebreak
+  
+
+\section*{References}
+
+<div id="refs"></div>
+ 
+
+  
+  
+  
+  
+  
+  
