@@ -1,0 +1,224 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{3}
+
+
+
+
+\section{Parameter sensitivity}
+
+Although we have good estimates for dispersal propensity, birth rates, maximum dispersal distance, and over-winter mortality probability, it is still insightful to test the sensitivity of these different parameters. We also tested the sensitivity of the disperser mortality probability and weaning mortality probability. These parameters were particularly important to examine as we estimated them from the model itself as described above. Therefore, we systematically varied each parameter and reran our simulations. We then made various measurements of the simulation outputs.
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model outputs to changes in weaning mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_weaning_m}'}
+load("Model_Outputs/ParameterSensitivity_100trials_weaning_m.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(weaning_m_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,300),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+plot(weaning_m_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.48,lty=2,lwd=2)
+
+points(weaning_m_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(weaning_m_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),ylim=c(1970,2000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Year of south collapse',side=2,line=3.1,outer=F,cex.lab=1.2)
+#abline(v=0.52,lty=2,lwd=2)
+
+mtext('Weaning mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in dispersal mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_d_m}'}
+load("Model_Outputs/ParameterSensitivity_100trials_d_m.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(d_m_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,200),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+plot(d_m_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.61,lty=2,lwd=2)
+
+points(d_m_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(d_m_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.1,outer=F,cex.lab=1.2)
+#abline(v=0.48,lty=2,lwd=2)
+
+mtext('Dispersal mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in dispersal propensity probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_d_prop}'}
+load("Model_Outputs/ParameterSensitivity_100trials_d_prop.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(d_prop_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,120),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+plot(d_prop_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.25,lty=2,lwd=2)
+
+points(d_prop_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+
+#plot(d_prop_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=0.25,lty=2,lwd=2)
+
+mtext('Dispersal propensity probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in maximum dispersal radius. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_radius}'}
+load("Model_Outputs/ParameterSensitivity_100trials_radius.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(radius_vector,trial_trial_mean,pch=16,xlab='',ylim=c(0,120),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,xlim=c(0,1500))
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1500),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1500),ylim=c(0,1000),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+plot(radius_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1500),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=300,lty=2,lwd=2)
+
+points(radius_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1500),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+#plot(radius_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=300,lty=2,lwd=2)
+
+mtext('Max dispersal distance',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+```{r,echo=F,fig.cap='Sensitivity of various model measurements to changes in over-winter mortality probability. The verticle, dashed line is the default parameter value (see Table 1).\\label{fig:sensitivity_u}'}
+load("Model_Outputs/ParameterSensitivity_100trials_u.Rdata")
+par(mfrow=c(2,2),mar=c(1.5,4,1,1),oma=c(3,1,0,0))
+
+plot(u_vector,trial_trial_mean,pch=16,xlab='',xlim=c(0,1),ylim=c(0,350),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Mean population size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_occupancy,pch=16,xlab='',xlim=c(0,1),ylim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Patch occupancy',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_variance,pch=16,xlab='',xlim=c(0,1),ylim=c(0,2500),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('Variance in pop size',side=2,line=3.1,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+plot(u_vector,trial_trial_ext_events,pch='*',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+mtext('# extinction events *', side=2,line=3.3,outer=F,cex.lab=1.2)
+abline(v=0.37,lty=2,lwd=2)
+
+points(u_vector,trial_trial_recol_events,pch='+',xlab='',xlim=c(0,1),ylim=c(0,100),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2,col='red')
+mtext('# recolonization events +',side=2,line=2.5,outer=F,cex.lab=1.2,col='red')
+
+#plot(u_vector,trial_trial_error,pch=16,xlab='',xlim=c(0,1),las=1,ylab=' ',cex.axis=1.2,cex.lab=1.2)
+#mtext('Mean squared error',side=2,line=3.6,outer=F,cex.lab=1.2)
+#abline(v=0.37,lty=2,lwd=2)
+
+mtext('Over-winter mortality probability',side=1,line=1,outer=T,cex = 1.2)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+```
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  

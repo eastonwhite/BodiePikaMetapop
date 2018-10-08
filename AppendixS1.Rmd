@@ -1,0 +1,115 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{0}
+
+
+
+\section{Expanded methods}
+\subsection{Additional study site background information}
+
+American pikas (\emph{Ochotona princeps}) are obligate talus (broken up pieces of rock) dwellers. At Bodie, Mono County, California (38.19 – 38.22 N; -118.99 – -119.01 W), pikas inhabit ore dumps from previous mining activity (Fig. \ref{fig:bodie_map}). The ore dumps differ in their size and spacing (Fig. \ref{fig:bodie_map}). It is believed that pika populations from adjacent lava rock outcrops were the source of the pikas that eventually occupied the Bodie ore dumps, although we have no solid records of when this transition occurred. The heyday of mining at Bodie occurred from 1878-1881, and ore dumps that appear identical to those occupied by pikas today were present in 1879 in the earliest known photograph of Bodie [@Wedertz1969]. The general spatial configuration of the ore dump patches is like a figure-8, such that there are relatively distinct northern and southern constellations of patches (see @Smith2015). Nevertheless, many patches in the north and south are in close proximity (Fig. \ref{fig:bodie_map}).
+
+\subsection{Model description}
+Let $\mathbf{x}(n)$ be the total number of pikas at Bodie at census time $n$, where $n \in \{0,1,2,\ldots\}$. We denote the total number of pikas on a given patch, $j$, as $x_j(n),\, j \in \{1,2,3,\ldots,79\}$. Note that all pikas in a given census are considered breeding adults because juvenile pikas that survive their first year are then capable of reproduction. To match the timing of the actual Bodie census, we assume our model census takes place in late summer or early fall when abundance is highest [@Smith74a; @Smith2015]. <!--We also assume that adults do not disperse and that juveniles only get one opportunity to disperse. We model fecundity using available litter size data and mortality as binomial random variables. We assume dispersal is a piece-wise function of distance between patches governed by a multinomial random variable. -->
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{SimpleBodieModel_SuppMaterial_files/figure-latex/Bodie_mapLAYOUT_EW3.pdf}
+\caption{Map of the Bodie study site. Black dots indicate a patch location and black dot size is proportional to the number of potential territories on that patch.\label{fig:bodie_map}}
+\end{figure}
+
+
+
+
+
+
+
+\subsection{Fecundity}
+We assume an equal sex ratio and that all females are able to reproduce in a given year [@Smith1983]. Let $R_f$ be a random variable describing the number of females born to a reproducing female, $f$, in a given year. In our study, we use actual litter size (mean = 3.3 young/litter) data from past studies (litter size determined from counts of mature embryos in pregnant females) [@Smith1978]. Specifically, the probability of a litter of sizes 1 through 5 are 0.02326, 0.2093, 0.3256, 0.3256, and 0.1163, respectively. This is higher than other North American pika populations (range 2.3 – 3.1; @Smith1978). We assume that all breeding females, regardless of age (all breeding pikas have the same average litter size independent of age) or location, have a litter size drawn from this distribution [@Millar1974, @Smith1978]. Pika mothers initiate two litters per year, but normally only one is successfully weaned [@Millar1974;@Smith1983]. Because pikas are able to reproduce after their first year, we let $B_j(n)$ represent the total reproductive output of the entire patch in year $n$. In the model we track the total number of pikas, not just females, to better compare to field data. Therefore, in the model we assume a patch has a 50:50 ratio of males and females. In the case of an odd number, we flip a coin to determine the sex of the odd-numbered pika. 
+\begin{equation}
+ B_j(n) = \sum_{f=1}^{\mathbf{x}(n-1)} R_f
+\end{equation}
+
+After reproduction occurs, there is some loss of juvenile pikas during weaning. @Millar1974 estimated that 21% of juvenile pikas may die during this period. His work took place at a high altitude site in Alberta. We do not have a similar estimate for pikas at Bodie. Therefore we estimated the probability of weaning mortality using an inverse modeling approach (see next section). The number of pikas that die due to weaning mortality is calculated using a binomial random variable with probability set at the value we estimated using the inverse modeling approach. 
+
+
+
+
+\subsection{Dispersal}
+After juveniles pikas are born, a subset of them disperse to a new patch. Non-dispersing individuals, compete for territories (can only obtain a territory if one is unoccupied) on their natal patch. If these individuals cannot obtain an empty territory by winter, they will die. The number of pikas allowed to disperse is governed by a binomial random variable with rate, $c$=0.25 [@Smith1987]. The simplest assumption to make is that pikas can only disperse to nearby patches (within 300 meters; @Smith74a; @PeacockSmith1997). Let $D_j(n)$ denote the number of dispersing pikas from a particular patch $j$ in year $n$. We denote $c$ to be the mean dispersal propensity for an individual pika. We assume $D_j(n)$ to be a binomial random variable that has the probability distribution
+\begin{equation}
+  \Pr(\{D_j(n) = d \}) = {B_j(n) \choose d} c^d (1-c)^{B_j(n) - d}, \hspace{2ex} d \in \{0,1,\ldots,B_j(n)\}.
+\end{equation}
+Each of the dispersing pikas, from $D_j(n)$, then disperses away from their natal patch to a target patch. The probability an individual pika targets a particular patch $i$ from their natal patch $j$ is the same for all patches within $r$=300 meters of the natal patch $j$, and zero for all other patches. Here $B_j(n)$ is the total reproductive output of patch $j$ in year $n$ as defined in the previous section on fecundity.
+
+We let $U_i$, where $i \in \{1,2,\ldots,79\}$ be a multinomially-distributed random variable for dispersing a pika from natal patch $j$ to one of 79 possibilities.  
+\begin{equation}
+Pr(\{U_1 = u_1, U_2 = u_2, \ldots, U_{79}= u_{79}\}) = \frac{79!}{u_1!\ldots u_{79}!} p_{j1}^{u_1}\ldots p_{j79}^{u_{79}}
+\end{equation}
+
+
+Once a dispersing pika is assigned a target patch, the disperser also endures a probability of mortality while dispersing. We denote $Y_i$ to be the number the number of pikas who chose a particular patch $i$. We assume $Y_i$ to be a binomial random variable that has the following probability distribution according to the probability rate $d_m$=0.61. This value was chosen by an inverse pattern-orientated approach (see next section).
+\begin{equation}
+  \Pr(\{Y_i = y \}) = {U_i \choose y} d_m^y (1-d_m)^{U_i - y}, \hspace{2ex} y \in \{0,1,\ldots, U_i\}.
+\end{equation}
+
+\subsection{Competition for territories}
+Pikas that survive dispersal then compete for territories on their new patches. We assume that if no territories are vacant on their given patch, they are not able to acquire a territory and subsequently die during winter. In the case where there are vacant territories, these pikas fill open territories. Any pikas without a territory after this time also die during winter. This same process for acquiring territories is also used for non-dispersing juveniles that remain on their natal patch. 
+
+\subsection{Adult mortality}
+Adult pikas endure some probability of mortality throughout the entire year. We denote the constant probability of mortality as $\mu$ and define $M_j(n)$ to be a random variable representing number of deaths at a particular patch $j \in \{1,2,\ldots,79\}$. Then
+\begin{equation} \label{mort_pdf}
+  \Pr(\{M_j(n) = m \}) = {x_j(n) \choose m} \mu^m (1-\mu)^{x_j - m}, \hspace{2ex} m \in \{0,1,\ldots,x_j(n)\}.
+\end{equation}
+
+We assume that all pikas that acquire a territory have enough time to build a haypile and survive until winter. All individuals endure an over-winter probability of mortality. We also assume that over-winter mortality rate is invariant across the study site. Our mortality estimates come from static life tables based on the age structure of collected pikas at Bodie; each animal’s age was determined by counting the annual adhesion lines in the diastema of the lower jaw of collected pikas [@Smith74a]. Average mortality of adults at Bodie was 37% (average $q_x$ values of 1-4 year old pikas) or 36% (based on percentage yearlings), thus mortality was lower at Bodie than any other North American pika population (range: 44-45%; @Smith1978).
+
+
+
+
+
+\section*{References}
+
+<div id="refs"></div>
+ 
+
+  
+  
+  
+  
+  
+  

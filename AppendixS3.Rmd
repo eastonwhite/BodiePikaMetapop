@@ -1,0 +1,160 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{2}
+
+
+
+\section{Parsing out the effects of spatial structure and patch heterogeneity}
+
+Spatial structure and patch size are both important components of metapopulation dynamics [@SmithGilpin1997]. At Bodie, patch size is the potential number of territories on each patch. For most of our simulations, we examine models with the actual Bodie spatial structure and the heterogeneity in number of territories per patch. However, it is also interesting to examine model outcomes when we relax these assumptions. Therefore, with a 2x2 full factorial design we examined the importance of these two assumptions: (1) no spatial structure (global dispersal, all patches are equally connected) and homogeneous patches (same number of territories per patch); (2) Bodie's spatial structure and homogeneous patches; (3) no spatial structure and heterogeneous patches; and (4) the actual Bodie spatial structure and heterogeneity in patches. We then made the same six measurements (e.g. patch occupancy) of these different models as we did in the rest of the paper. 
+
+```{r,echo=FALSE}
+#setwd('~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel')
+#bibliography: White_bib.bibtex
+#Need to run models here, or pull in model outputs
+sampled_census_bodie <- read.table("Scripts/sampled_census_bodie.txt",header=T,sep= "\t")
+names(sampled_census_bodie) <- c(1972,1977,1989,1991,1992,1993,1994,1995,1996,      1997,1998,1999,2000,2001,2003,2004,2005, 2006,2008,2009,2010)
+```
+
+
+
+```{r,echo=FALSE}
+####TABLE OF EXPERIMENT MODEL RESULTS####
+
+
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+ModelNames = c("Field Data","Bodie structure + heterogeneity","Bodie structure + homogeneity", "No spatial structure + heterogeneity","No spatial structure + homogeneity")
+TableHeaders= c('Mean pop. size','Variance','Patch occupancy', 'Collapse year', '# extinct. events','# recolon. events','Error')
+experiment=matrix(0,nrow=5,ncol=7)
+rownames(experiment)=ModelNames
+colnames(experiment)=TableHeaders
+
+# Calculate the number of extinction and recolonization events
+  ext_events = matrix(0,nrow=1,ncol=20)
+  recol_events = matrix(0,nrow=1,ncol=20)
+  for (j in 1:20){
+    ext_events[,j] = sum(sampled_census_bodie[,j]>0 & sampled_census_bodie[,j+1]==0,na.rm=T)
+    recol_events[,j] = sum(sampled_census_bodie[,j]==0 & sampled_census_bodie[,j+1]>0,na.rm=T)
+  }
+census_ext_events=sum(ext_events)
+census_recol_events=sum(recol_events)
+
+experiment[1,1:7]=c(mean(colSums(sampled_census_bodie,na.rm=T)),var(colSums(sampled_census_bodie,na.rm=T)),mean(colSums(sampled_census_bodie>0,na.rm=T)/66),as.numeric(names(which((colSums(sampled_census_bodie[c(2:19,21:37,57,58),]))<14)[1])),census_ext_events,census_recol_events,0)
+experiment[2:5,1]=c(mean(trial_mean),mean(two_trial_mean),mean(three_trial_mean),mean(four_trial_mean))
+experiment[2:5,2]=c(mean(trial_variance),mean(two_trial_variance),mean(three_trial_variance),mean(four_trial_variance))
+experiment[2:5,3]=c(mean(trial_occupancy),mean(two_trial_occupancy),mean(three_trial_occupancy),mean(four_trial_occupancy))
+experiment[2:5,4]=c(mean(trial_ext_year),mean(two_trial_ext_year),mean(three_trial_ext_year),mean(four_trial_ext_year))
+experiment[2:5,5]=c(mean(trial_ext_events),mean(two_trial_ext_events),mean(three_trial_ext_events),mean(four_trial_ext_events))
+experiment[2:5,6]=c(mean(trial_recol_events),mean(two_trial_recol_events),mean(three_trial_recol_events),mean(four_trial_recol_events))
+experiment[2:5,7]=c(mean(trial_error),mean(two_trial_error),mean(three_trial_error),mean(four_trial_error))
+
+library(knitr)
+kable(experiment[,1:4], digits=2,caption = 'Model outputs for four different scenarios of possible Bodie spatial structure and patch heterogeneity as compared to field data.')
+#kable(experiment[,5:7], digits=2)
+```
+
+
+
+```{r,echo=F, tidy=T,fig.cap='Comparison of four different simulation scenarios representing combinations of different spatial patterns and patch heterogeneities. The dashed horizontal line on each patch represents the actual measured value from the field. 1000 trials were run for each treatment. The legend apples to all four panels.\\label{fig:four_model_experiment_supp_mat}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+par(mfrow=c(2,2),mar=c(3,3.5,1,1),oma=c(2,2,0,0))
+boxplot(c(trial_mean),c(two_trial_mean),c(three_trial_mean),c(four_trial_mean),xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,200))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+mtext('Mean population size',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=87,lty=2,lwd=2)
+
+
+boxplot(c(trial_variance),c(two_trial_variance),c(three_trial_variance),c(four_trial_variance),xlab=' ',las=1,ylab=' ', outline=T, medlwd=0.7,outpch=20,boxlty=0, outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,3000))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch Homogeneity'), col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Variance in pop. size',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=860,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_occupancy),c(two_trial_occupancy),c(three_trial_occupancy),c(four_trial_occupancy),xlab=' ',las=1,ylab=' ',outline=T, medlwd=0.7,outpch=20, boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5), notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1), rgb(0.7,0.7,0.7,1)),border='black',ylim=c(0,1.2))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'), col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),pch=15)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+ #                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Patch occupancy',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=0.38,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_ext_year),c(two_trial_ext_year),c(three_trial_ext_year),c(four_trial_ext_year),
+        xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:4,col=c(rgb(0.3,0.3,0.3,1),rgb(0.7,0.7,0.7,1)),border='black',ylim=c(1970,2500))
+
+text(cex=1,c(1.5,3.5), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]), xpd=TRUE, srt=0,adj=1, pos=1,labels=c(paste("Bodie spatial \nstructure"),paste("No spatial \nstructure")))
+
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+ #                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Year of southern collapse',side=2,line=3,outer=F)
+mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=1990,lty=2,lwd=2)
+
+```
+
+
+
+
+
+\section*{References}
+
+<div id="refs"></div>
+ 
+
+  
+  
+  
+  
+  
+  

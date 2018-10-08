@@ -1,0 +1,184 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{6}
+
+
+\section{Long-term trends}
+  
+In the main manuscript, we presented results comparing the model to census data starting in 1972. We also examined model predictions into the future. We see that the northern population of pikas in Bodie rarely goes extinct in model projections (Fig. \ref{fig:long_term_trends}). Conversely, the southern area population usually goes extinct within a couple of decades (Fig. \ref{fig:long_term_trends}). Here we still assume that pikas can only move a maximum of 300 meters [@Smith74a]. On longer time-scales long-distance dispersal events may be more important. For example, there is one recent report of a pika at Bodie having successfully colonized an isolated patch a minimum of 1.2 km from the nearest source population [@Nichols2016].
+
+```{r,echo=FALSE,eval=T, fig.cap='Projected long-term dynamics of pikas at Bodie, California. Individual grey lines denote individual model runs and the dark black line is the average population size across 1000 trials.\\label{fig:long_term_trends}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+    par(mfcol=c(3,1), mai = c(0.05, 1, 0,0),oma=c(5,1,5,0.8))
+
+  
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[1:79,1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[1:79,1:300],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='Total',xaxt='n',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[1:79,1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[1:79,1:300],na.rm=T))
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ######################################################
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T),type='l',col='grey',ylim=c(0,250),ylab='North',xaxt='n',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(38:56,59:79),1:300],na.rm=T))
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ######################################################
+  j=1
+  model_allpatch_census=trial_pop[[j]]
+  mean_matrix=colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T)
+  plot(1972:2271,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100),ylab='South',las=1,xlim=c(1970,2270))
+  for (j in 2:30){
+    model_allpatch_census=trial_pop[[j]]
+    points(1972:2271,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T),type='l',col='grey',ylim=c(0,100))
+    mean_matrix=rbind(mean_matrix,colSums(model_allpatch_census[c(1:37,57,58),1:300],na.rm=T)) 
+  }
+  
+  points(1972:2271,colMeans(mean_matrix),lwd=3,col='black',type='l')
+  
+  ################################################################
+  ################################################################
+  ################################################################
+  ################################################################
+  
+  # Plot sampled populations only
+  
+  # par(mai = c(0.05, 0.5, 0,0.5))   
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[1:79,1:300],na.rm=T)
+  # plot(1972:2271,colSums(model_census[1:79,1:300],na.rm=T),type='l',ylim=c(0,250),ylab=' ',las=1,col=rgb(0.5,0.5,0.5,0.5),xaxt='n',xlim=c(1970,2270))
+  # for (j in 2:30){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[1:79,1:300],na.rm=T),type='l',ylim=c(0,100),col=rgb(0.5,0.5,0.5,0.5))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[1:79,1:300],na.rm=T))
+  #   
+  # }
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[1:79,1:21],na.rm=T),pch=16,col='black')
+  # 
+  # ######################################################################
+  # ######################################################################
+  # 
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[c(38:56,59:79),],na.rm=T)
+  # plot(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',ylim=c(0,250),ylab=' ',xaxt='n',col=rgb(0.5,0.5,0.5,0.5),las=1,xlim=c(1970,2270))
+  # for (j in 2:50){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[c(38:56,59:79),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[c(38:56,59:79),],na.rm=T))
+  # }
+  # 
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(38:56,59:79),1:20],na.rm=T),pch=16,col='black')
+  # 
+  # ######################################################################
+  # 
+  # j=1
+  # model_census=trial_sampled_pop[[j]]
+  # mean_matrix=colSums(model_census[c(1:37,57,58),],na.rm=T)
+  # plot(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100),ylab='  ',xlim=c(1970,2270),las=1)
+  # for (j in 2:50){
+  #   model_census=trial_sampled_pop[[j]]
+  #   points(1972:2471,colSums(model_census[c(1:37,57,58),],na.rm=T),type='l',col=rgb(0.5,0.5,0.5,0.5),ylim=c(0,100))
+  #   mean_matrix=rbind(mean_matrix,colSums(model_census[c(1:37,57,58),],na.rm=T))
+  # }
+  # 
+  # 
+  # points(as.numeric(names(sampled_census_bodie)),colSums(sampled_census_bodie[c(1:37,57,58),1:20],na.rm=T),pch=16,col='black')
+  # #abline(h=14,lwd=2,lty=2)
+  
+  mtext('Population size (# of individuals)',side = 2,outer = TRUE,line=-1)
+  mtext('Time (years)',side = 1,outer = TRUE,line=2.6,at=0.6)
+  #mtext('All patches',side = 3,outer = TRUE,line=1,at=0.31)
+  #mtext('Only sampled patches',side = 3,outer = TRUE,line=1,at=0.75)
+  
+```
+
+  
+```{r,tidy=T,echo=FALSE,include=F,eval=F}
+  #this chuck calculates the proportion of patches that went extinct by a future time  
+# load("Model_Outputs/Modeloutput_500years_dm048_wm0.52_1000trials_longcensus.Rdata")
+#    par(mfrow=c(1,1),mar=c(3,3,1,1),oma=c(2,2,0,0))
+#   end_times = seq(10,500,by=10)
+#   Prop_Ext=matrix(0,nrow=1,ncol=length(end_times))
+#   for (k in 1:length(end_times)){
+#     end_pop_size=rep(0,times=1000)
+#     
+#     for (j in 1:1000){
+#       model_allpatch_census=trial_pop[[j]]
+#       end_pop_size[j] = colSums(model_allpatch_census)[end_times[k]]
+#     }
+#     end_pop_size[end_pop_size>0]=1
+#     Prop_Ext[k]=1- (sum(end_pop_size)/1000)
+#     
+#   }
+#   
+#   plot(end_times,Prop_Ext,ylab=" ",xlab=" ",las=1,pch=16,ylim=c(0,0.4),cex.axis=1.2)
+#       mtext('Probability of extinction',side=2,line=3,cex=1.2)
+#     mtext('Time (years)',side=1,line=3,cex=1.2)
+    
+```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ \section*{References}
+
+<div id="refs"></div>
+  
+  
+  

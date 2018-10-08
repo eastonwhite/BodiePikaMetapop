@@ -1,0 +1,112 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{4}
+
+
+\section{The role of mainland patches}
+
+Large patches in the northern half of the study area may serve as ``mainlands'' in a mainland-island system. To test this hypothesis, we reran our models with and without mainland patches. In the without mainland patches scenario, we simply set the three large northern patches (patch numbers 44, 64, and 65) to be average size patches. We then made a number of population dynamics measurements for the two scenarios (Fig. \ref{fig:mainland_experiment}). 
+
+```{r,echo=F,fig.cap='Measurements of model outputs where “mainland patches” were included or not included (assumed to be the size of an average patch) in simulations. The horizontal dashed lines represent measurements from field data.\\label{fig:mainland_experiment}'}
+#Easton R. White 
+#created 21-Mar-2016
+#Last edited 21-Mar-2016
+
+load("Model_Outputs/Mainland_Effect_1000trials.Rdata")
+
+#Plot for Mainland island removal experiment
+par(mfrow=c(2,2),mar=c(3,5,1,1),oma=c(2,0.5,0,0))
+boxplot(c(trial_mean),c(no_mainlands_mean),xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,180))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+mtext('Mean population size',side=2,line=3,outer=F,cex=1)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=87,lty=2,lwd=2)
+
+
+boxplot(c(trial_variance),c(no_mainlands_variance),xlab=' ',las=1,ylab=' ', outline=T, medlwd=0.7,outpch=20,boxlty=0, outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,1500))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch Homogeneity'), col=c(rgb(0.3,0.3,0.3,1)),pch=15)
+
+mtext('Variance in pop. size',side=2,line=3.8,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=860,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_occupancy),c(no_mainlands_occupancy),xlab=' ',las=1,ylab=' ',outline=T, medlwd=0.7,outpch=20, boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5), notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(0,1))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'), col=c(rgb(0.3,0.3,0.3,1)),pch=15)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+#                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Patch occupancy',side=2,line=3,outer=F)
+#mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=0.38,lty=2,lwd=2)
+
+
+
+boxplot(c(trial_ext_year),c(no_mainlands_ext_year),
+        xlab=' ',las=1,ylab=' ',outline=T,medlwd=0.7,outpch=20,boxlty=0,outcol=rgb(0.3,0.3,0.3,0.5),notch=F,at=1:2,col=c(rgb(0.3,0.3,0.3,1)),border='black',ylim=c(1970,2080))
+
+text(x=c(1,2), y=par()$usr[3]-0.05*(par()$usr[4]-par()$usr[3]),xpd=T,labels=c('Mainland', "No mainland"),cex=1)
+
+#legend('topleft',legend=c('Patch heterogeneity','Patch homogeneity'),col=c(rgb(0.3,0.3,0.3,1),
+#                                                                          rgb(0.7,0.7,0.7,1)),pch=15)
+
+mtext('Year of southern collapse',side=2,line=3.8,outer=F)
+mtext('Model setup',side=1,line=0.5,outer=T,at =0.55)
+abline(h=1989,lty=2,lwd=2)
+
+
+```
+
+
+
+  
+  
+  
+  
+  
+  

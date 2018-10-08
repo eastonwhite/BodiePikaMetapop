@@ -1,0 +1,78 @@
+---
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: true
+fontsize: 12pt
+geometry: margin=1in
+csl: ecology.csl
+bibliography: Whitebib.bib
+header-includes: 
+    \usepackage{float}
+    \usepackage{lineno}
+    \renewcommand{\thepage}{S\arabic{page}} 
+    \renewcommand{\thesection}{Appendix S\arabic{section}}  
+    \renewcommand{\thetable}{S\arabic{table}} 
+    \renewcommand{\theequation}{S\arabic{equation}}   
+    \renewcommand{\thefigure}{S\arabic{figure}}
+    \floatplacement{figure}{H}
+    \renewcommand*\oldstylenums[1]{\textosf{#1}}
+    \usepackage{tocloft}
+    \addtolength{\cftsecnumwidth}{70pt}
+    \setcounter{tocdepth}{1}
+    \usepackage[round]{natbib}  \bibpunct[:]{(}{)}{,}{a}{}{;}
+---
+
+White, E.R. and A.T. Smith. 2018. The role of spatial structure in the collapse of regional metapopulations. \emph{Ecology}.
+\vspace{2 mm}
+
+Corresponding author: eastonrwhite@gmail.com
+\vspace{2 mm}
+
+Corresponding R scripts and data can be found at https://github.com/erwhite1/BodiePikaMetapop
+\vspace{2 mm}
+
+\setcounter{section}{5}
+
+```{r,echo=FALSE}
+#setwd('~/Desktop/Research/Nagy Lab/Pikas/Modeling/SimpleBodieModel')
+#bibliography: White_bib.bibtex
+#Need to run models here, or pull in model outputs
+sampled_census_bodie <- read.table("Scripts/sampled_census_bodie.txt",header=T,sep= "\t")
+names(sampled_census_bodie) <- c(1972,1977,1989,1991,1992,1993,1994,1995,1996,      1997,1998,1999,2000,2001,2003,2004,2005, 2006,2008,2009,2010)
+```
+
+\section{Degraded patches}
+
+@Smith2015 suggested that several patches with old pika sign in 1972 may no longer be habitable. Although these patches had sign of previous occupancy by pikas in 1972, no pikas have been observed on these patches since. These include patches numbers `r paste(which(rowSums(sampled_census_bodie)==0), sep=',')`, all of which are in the southern constellation. We ran the simulation with and without these patches to understand their effect on overall population dynamics. We found that including these degraded patches delayed the extinction of the southern area and the Bodie site as a whole (Fig. \ref{fig:subset_patches}). The qualitative results are the same whether or not we include these `r length(which(rowSums(sampled_census_bodie)==0))` patches. Therefore, we left these patches in the model for the results in the main manuscript.
+
+```{r, echo=F, fig.height=4,fig.width=5,fig.cap='The distribution of southern extinction times for the model with all patches included (presented in the main manuscript), or a subset of patches with the potentially "degraded" patches removed.\\label{fig:subset_patches}'}
+load("Model_Outputs/FourModelExperiment_1000trials1000years_all_patches.Rdata")
+
+    par(mfrow=c(1,1), mai = c(1, 1.3, 0,0),oma=c(0.1,0.1,1.4,0.8))
+    all_patches <- density(trial_ext_year)
+    plot(all_patches,main=" ",las=1, xlim=c(1960,2100),ylab=" ",xlab=' ',ylim=c(0,0.04),cex.axis=1.2,col=rgb(0.1,0.5,0.5,0.3))
+    polygon(all_patches, col=rgb(0.1,0.5,0.5,0.3),  
+              border=rgb(0.1,0.5,0.5,0.3))
+ 
+    abline(v=1989,lty=2,lwd=2)
+    mtext('Frequency',side=2,line=5,cex=1.4)
+    mtext('Year of southern collapse',side=1,line=3,cex=1.4)
+    #mtext('a',side=3,line=0.3,outer=F,cex=1.4,at=1960,lty=2)
+    
+    
+load("Model_Outputs/FourModelExperiment_1000trials1000years_subset_patches.Rdata")  
+    subset_patches <- density(trial_ext_year)
+    points(subset_patches,cex.axis=1.2,col=rgb(0.8,0.5,0.5,0.3),type='l')
+    polygon(subset_patches, col=rgb(0.8,0.5,0.5,0.3),  
+              border=rgb(0.8,0.5,0.5,0.3))
+    
+legend('topright',legend=c('all patches','subset of patches'), col=c(rgb(0.1,0.5,0.5,0.3), rgb(0.8,0.5,0.5,0.3)), pch=15,cex=1.6,bty='n')    
+```
+
+
+
+\section*{References}
+
+<div id="refs"></div>
