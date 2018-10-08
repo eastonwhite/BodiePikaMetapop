@@ -34,7 +34,7 @@ trial_trial_error=matrix(0,nrow=1,ncol=length(d_m_vector)) #error between simula
 #########################################
 
 #start vector for testing different dispersal mortality values
-for (IM in 1:length(d_prop_vector)){
+for (IM in 1:length(d_m_vector)){
 
   ## Have to comment out all "vector_name[IM]" except for one you are testing
   d_m = d_m_vector[IM] #set disperser mortality rate
@@ -50,7 +50,7 @@ for (IM in 1:length(d_prop_vector)){
   u= 0.37        #0.37 Smith: Ecology 1974a, 1978
   #d_m=0.48        #from this paper
   d_prop = 0.25 #Nagy unpublished, Smith 1987
-  weaning_m =0.52 #from this paper
+  weaning_m =0.48 #from this paper
   ####default model parameters#
 
   #creates matrix of patchs within specified distance of each other (300m is default dispersal distance)
@@ -61,7 +61,7 @@ for (IM in 1:length(d_prop_vector)){
   diag(inter_patch_distances)=0#makes it so pikas cannot disperse back to their own natal patch
   
   #Start model setup here
-  trials=10
+  trials=50
   IC=IC1972
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -88,11 +88,11 @@ for (IM in 1:length(d_prop_vector)){
       if (sum(IC==IC1991)==79){
         APika_sample=NA_matrix[,20:38]*APika #for 19 year model
         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }else if(sum(IC==IC1972)==79){
         APika_sample=NA_matrix*APika
         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
@@ -135,4 +135,4 @@ print(paste('value',IM,sep='')) #a simple counter
 
 save(IC,trials,d_m_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,
      trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,
-     trial_trial_recol_events,trial_trial_error,file='ParameterSensitivity_1000trials_d_m.Rdata')
+     trial_trial_recol_events,trial_trial_error,file='Model_Outputs/ParameterSensitivity_100trials_d_m.Rdata')

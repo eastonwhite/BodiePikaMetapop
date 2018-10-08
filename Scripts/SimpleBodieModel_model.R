@@ -6,7 +6,7 @@
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 
 #time for model to run
-max.time= 150#38#19 #38 years to match bodie census length to 2009
+max.time= 50#21 #39 years to match bodie census length to 2010
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)
@@ -14,17 +14,17 @@ JPika = matrix(0,nrow= 79,ncol=max.time)
 DJPika = matrix(0,nrow= 79,ncol=1)
 
 #Model parameters
-#r= 3.25       #1.625 (3.25) Smith: Ecology 1974a, we are currently using actual litter size data
+#r= 3.3       #1.625 (3.3) Smith: Ecology 1978, we are currently using actual litter size data
 u= 0.37         #0.37 Smith: Ecology 1974a, 1978
-d_m=0.48        # value estimated in this paper
+d_m=0.61        # value estimated in this paper
 d_prop = 0.25   #Nagy unpublished, Smith 1987
-weaning_m=0.52  #value estimated in this paper, Millar 1973 found a value of 0.21, but this was in Alberta
+weaning_m=0.48  #value estimated in this paper, Millar 1973 found a value of 0.21, but this was in Alberta
 
 
 ##########################################################
 ##########################################################
 for (j in 2:(max.time)){
-  for (i in 1:79){
+  for (i in 1:nrow(APika)){
     
     #over winter mortality function
     APika[i,j] = APika[i,j-1] - rbinom(1,APika[i,j-1],u) #adult mortality rate to correspond with the census occuring before winter
@@ -51,7 +51,7 @@ for (j in 2:(max.time)){
     }
     JPika[i,j]=0
     #DJPika[i,1]= JPika[i,j]+DJPika[i,1] #alternative model where juveniles without a territory on natal patch also disperse (not used in paper)
-    DJPika[i,1]= DJPika[i,1]- rbinom(1,DJPika[i,1],d_m)  #dispersal mortality function
+    DJPika[i,1]= DJPika[i,1] - rbinom(1,DJPika[i,1],d_m)  #dispersal mortality function
   }
   
   #call to randomly take DJPika (without territories) and send them to nearby patches

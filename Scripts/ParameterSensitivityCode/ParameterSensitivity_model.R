@@ -6,7 +6,7 @@
 #particular code gives births to new pikas and splilts them into groups, some automatically disperse. Others stay are patch, compete and get territory or die
 
 #time for model to run
-max.time= 38#38#19 #38 years to match bodie census length to 2009
+max.time= 300#38#19 #38 years to match bodie census length to 2009
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)

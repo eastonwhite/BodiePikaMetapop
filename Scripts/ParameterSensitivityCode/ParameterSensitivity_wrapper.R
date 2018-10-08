@@ -48,9 +48,9 @@ for (IM in 1:length(d_prop_vector)){
   radius=300     #from Smith and Gilpin 1997
   #r= 1.625      #1.625 (3.25) Smith: Ecology 1974a #no longer used, no we use actual distribution of litter sizes 
   u= 0.37        #0.37 Smith: Ecology 1974a, 1978
-  d_m=0.7        #from this paper
+  d_m=0.61        #from this paper
   #d_prop = 0.25 #Nagy unpublished, Smith 1987
-  weaning_m =0.5 #from this paper
+  weaning_m =0.48 #from this paper
   ####default model parameters#
 
   #creates matrix of patchs within specified distance of each other (300m is default dispersal distance)
@@ -88,11 +88,11 @@ for (IM in 1:length(d_prop_vector)){
       if (sum(IC==IC1991)==79){
         APika_sample=NA_matrix[,20:38]*APika #for 19 year model
         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }else if(sum(IC==IC1972)==79){
         APika_sample=NA_matrix*APika
         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))

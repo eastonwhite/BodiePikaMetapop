@@ -17,15 +17,15 @@ u_vector=seq(0.05,0.95,by=0.01)
 weaning_m_vector=seq(0.05,0.95,by=0.01) 
 
 #empty vectors to store measurements made for each dispersal mortality value
-trial_trial_mean=matrix(0,nrow=1,ncol=length(d_m_vector)) #mean population size
-trial_trial_mean_sd=matrix(0,nrow=1,ncol=length(d_m_vector)) #sd of population size
-trial_trial_variance= matrix(0,nrow=1,ncol=length(d_m_vector)) #variance in pop size
-trial_trial_ext_year=matrix(0,nrow=1,ncol=length(d_m_vector)) # year of southern extinction
-trial_trial_occupancy=matrix(0,nrow=1,ncol=length(d_m_vector)) #patch occupancy
-trial_trial_occupancy_sd=matrix(0,nrow=1,ncol=length(d_m_vector))
-trial_trial_ext_events=matrix(0,nrow=1,ncol=length(d_m_vector)) #number of extinction events
-trial_trial_recol_events=matrix(0,nrow=1,ncol=length(d_m_vector)) #number of recolonization events
-trial_trial_error=matrix(0,nrow=1,ncol=length(d_m_vector)) #error between simulation and field
+trial_trial_mean=matrix(0,nrow=1,ncol=length(d_prop_vector)) #mean population size
+trial_trial_mean_sd=matrix(0,nrow=1,ncol=length(d_prop_vector)) #sd of population size
+trial_trial_variance= matrix(0,nrow=1,ncol=length(d_prop_vector)) #variance in pop size
+trial_trial_ext_year=matrix(0,nrow=1,ncol=length(d_prop_vector)) # year of southern extinction
+trial_trial_occupancy=matrix(0,nrow=1,ncol=length(d_prop_vector)) #patch occupancy
+trial_trial_occupancy_sd=matrix(0,nrow=1,ncol=length(d_prop_vector))
+trial_trial_ext_events=matrix(0,nrow=1,ncol=length(d_prop_vector)) #number of extinction events
+trial_trial_recol_events=matrix(0,nrow=1,ncol=length(d_prop_vector)) #number of recolonization events
+trial_trial_error=matrix(0,nrow=1,ncol=length(d_prop_vector)) #error between simulation and field
 
 
 
@@ -47,9 +47,9 @@ for (IM in 1:length(d_prop_vector)){
   radius=300     #from Smith and Gilpin 1997
   #r= 1.625      #1.625 (3.25) Smith: Ecology 1974a 
   u= 0.37        #0.37 Smith: Ecology 1974a, 1978
-  d_m=0.48        #from this paper
+  d_m=0.61        #from this paper
   #d_prop = 0.25 #Nagy unpublished, Smith 1987
-  weaning_m =0.52 #from this paper
+  weaning_m =0.48 #from this paper
   ####default model parameters#
 
   #creates matrix of patchs within specified distance of each other (300m is default dispersal distance)
@@ -60,7 +60,7 @@ for (IM in 1:length(d_prop_vector)){
   diag(inter_patch_distances)=0 #makes it so pikas cannot disperse back to their own natal patch
   
   #Start model setup here
-  trials=10
+  trials=20
   IC=IC1972
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -88,11 +88,11 @@ for (IM in 1:length(d_prop_vector)){
       if (sum(IC==IC1991)==79){
         APika_sample=NA_matrix[,20:38]*APika #for 19 year model
         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }else if(sum(IC==IC1972)==79){
         APika_sample=NA_matrix*APika
         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
@@ -133,4 +133,4 @@ print(paste('value',IM,sep='')) #a simple counter
 
 }
 
-#save(IC,trials,d_prop_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,trial_trial_recol_events,trial_trial_error,file='ParameterSensitivity_1000trials_d_prop.Rdata')
+#save(IC,trials,d_prop_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,trial_trial_recol_events,trial_trial_error,file='Model_Outputs/ParameterSensitivity_100trials_d_prop.Rdata')

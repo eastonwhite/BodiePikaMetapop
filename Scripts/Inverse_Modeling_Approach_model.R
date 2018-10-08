@@ -7,7 +7,7 @@
 #the code now uses the actual litter size distribution found in Smith 1978. The code also includes a term for mortality between birth and weaning
 #time for model to run
 
-max.time= 19 #38 is for 1972 to 2009, # 19 is for 1991 to 2009
+max.time= 20 #39 is for 1972 to 2009, # 19 is for 1991 to 2009, 20 is for 1991 to 2010
 
 #matrixes for adult and juvenile pika, and for territory count
 APika = matrix(IC,nrow= 79,ncol=max.time)

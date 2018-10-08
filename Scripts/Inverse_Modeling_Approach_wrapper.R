@@ -1,14 +1,26 @@
 #Created by Easton R White
-#Created on 25-Jun-2015
+#Created on 25-Jun-2115
 #Last edited 7-Aug-2015
 
 #This is code to perform an inverse modeling scheme to find reasonable values for dispersal survival rate
 #I run simulations using different values of dispersal mortality to see which value fits
 #the census data from 1991-2009 (where we have the most complete census data)
 
+require(progress)
+
+set.seed(12345)
 #Parameters not known from field
-d_m_vector=rep(seq(0.02,0.98,by=0.02),times=49)
-weaning_m_vector=rep(seq(0.02,0.98,by=0.02), each = 49, length = 2401) #vector of dispersal mortality rates to test
+d_m_values=seq(0.1,0.9,by=0.01)
+weaning_m_values=seq(0.3,0.7,by=0.01) #vector of dispersal mortality rates to test
+
+parameter_values = expand.grid(d_m_values,weaning_m_values)
+
+pb <- progress_bar$new(
+  format = "  downloading [:bar] :percent eta: :eta",
+  total = nrow(parameter_values), clear = FALSE, width= 60)
+
+d_m_vector = parameter_values[,1]
+weaning_m_vector = parameter_values[,2]
 
 #from cross validation scheme d_m=0.77,weaning_m=0.44
 
@@ -34,13 +46,23 @@ diag(inter_patch_distances)=0 #makes it so pikas cannot disperse back to their o
 source('Scripts/Load_Initial_Conditions.R')
 #########
 
+
+remove_degraded_patches='no'
+if (remove_degraded_patches == 'yes'){
+  inter_patch_distances[which(rowSums(sampled_census_bodie)==0),]=0
+  inter_patch_distances[,which(rowSums(sampled_census_bodie)==0)]=0
+  
+  territories[which(rowSums(sampled_census_bodie)==0)]=0
+  IC1991[which(rowSums(sampled_census_bodie)==0)]=0
+}
+
 #start vector for testing different dispersal mortality values
 for (IM in 1:length(d_m_vector)){
 
   d_m = d_m_vector[IM] #set disperser mortality rate
   weaning_m = weaning_m_vector[IM]
  
-  trials=100
+  trials=50
   IC=IC1991
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
@@ -65,14 +87,14 @@ for (IM in 1:length(d_m_vector)){
       
       #different measurements to take depending on if we start with 1991 or 1972 initial conditions (we use 1991 for inverse modeling approach, 1972 elsewhere)
       if (sum(IC==IC1991)==79){
-        APika_sample=NA_matrix[,20:38]*APika #for 19 year model
+        APika_sample=NA_matrix[,20:39]*APika #for 19 year model
         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
-        #trial_error[,k]=sum((colSums(sampled_census_bodie[,seq(4,20,by=2)],na.rm=T) - colSums(APika_sample[,seq(1,17,by=2)],na.rm=T))^2) #use training set from 1991 onward
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        #trial_error[,k]=sum((colSums(sampled_census_bodie[,seq(4,21,by=2)],na.rm=T) - colSums(APika_sample[,seq(1,17,by=2)],na.rm=T))^2) #use training set from 1991 onward
       }else if(sum(IC==IC1972)==79){
         APika_sample=NA_matrix*APika
         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
@@ -85,15 +107,15 @@ for (IM in 1:length(d_m_vector)){
       trial_pop[[k]]=APika
       
       #Currently this code is set of to count extinction and recolonization events only since 1991
-      ext_events = matrix(0,nrow=1,ncol=17-1)
-      recol_events = matrix(0,nrow=1,ncol=17-1)
-      for (j in 1:(17-1)){
+      ext_events = matrix(0,nrow=1,ncol=ncol(APika_sample)-1)
+      recol_events = matrix(0,nrow=1,ncol=ncol(APika_sample)-1)
+      for (j in 1:(ncol(APika_sample)-1)){
         ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
         recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
       }
-      
-      trial_ext_events[,k]=sum(ext_events)
-      trial_recol_events[,k]=sum(recol_events)	
+      # 
+       trial_ext_events[,k]=sum(ext_events)
+       trial_recol_events[,k]=sum(recol_events)	
       
       #print(k)
     }
@@ -109,10 +131,27 @@ for (IM in 1:length(d_m_vector)){
   trial_trial_recol_events[IM]=mean(trial_recol_events)
   trial_trial_error[IM]=mean(trial_error)
 
-print(paste('value',IM,sep='')) #a simple counter
+#if (IM %in% seq(1,7000,by=100)){print(paste('value',IM,sep=''))} #a simple counter
+  pb$tick()
 
 }
 
-#save(IC,trials,d_m_vector,weaning_m_vector,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,
-#     trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,
-#    trial_trial_recol_events,trial_trial_error,file='inverse_modeling_100trials_900combo_d_and_w.Rdata')
+
+trial_trial_error=c(trial_trial_error)
+
+model_outputs = as.data.frame(cbind(d_m_vector,weaning_m_vector,trial_trial_error))
+model_outputs = model_outputs[order(model_outputs$trial_trial_error),]
+
+model_outputs$trial_trial_error_ranking = 1:nrow(model_outputs)
+
+model_outputs$total_survival = 0.63*(0.25*((1-model_outputs$d_m_vector)*(1-model_outputs$weaning_m_vector)) + 0.75*(1-model_outputs$weaning_m_vector))
+model_outputs$total_survival_ranking = 1:nrow(model_outputs)
+bodie_first_year_total_mortality = 0.889
+model_outputs$survival_error = (model_outputs$total_survival- (1-bodie_first_year_total_mortality))^2
+#model_outputs = model_outputs[order(model_outputs$survival_error),]
+#model_outputs$survival_error_ranking = 1:nrow(model_outputs)
+
+#model_outputs$master_ranking = model_outputs$survival_error_ranking+model_outputs$trial_trial_error_ranking
+
+
+#save(IC,trials,d_m_vector,weaning_m_vector,model_outputs,trial_trial_mean,trial_trial_mean_sd,trial_trial_variance,trial_trial_ext_year,trial_trial_occupancy,trial_trial_occupancy_sd,trial_trial_ext_events,trial_trial_recol_events,trial_trial_error,file='Model_Outputs/inverse_modeling_50trials.Rdata')

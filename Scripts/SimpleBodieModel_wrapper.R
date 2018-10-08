@@ -18,9 +18,18 @@ diag(inter_patch_distances)=0 #makes it so pikas cannot disperse back to their o
 ######### LOAD all the initial conditions
 source('Scripts/Load_Initial_Conditions.R')
 #########
+remove_degraded_patches='no'
+if (remove_degraded_patches == 'yes'){
+  inter_patch_distances[which(rowSums(sampled_census_bodie)==0),]=0
+  inter_patch_distances[,which(rowSums(sampled_census_bodie)==0)]=0
+  territories[which(rowSums(sampled_census_bodie)==0)]=0
+  IC1972[which(rowSums(sampled_census_bodie)==0)]=0
+}
 
-  trials=1
+  trials=30
   IC=IC1972 #set initial conditions (1972 data by default)
+  
+  
     
   trial_mean=matrix(0,nrow=1,ncol=trials)
   trial_mean_sd=matrix(0,nrow=1,ncol=trials)
@@ -44,14 +53,14 @@ source('Scripts/Load_Initial_Conditions.R')
       
       #different measurements to take depending on if we start with 1991 or 1972 initial conditions (we use 1991 for inverse modeling approach, 1972 elsewhere)
       if (sum(IC==IC1991)==79){
-        APika_sample=NA_matrix[,20:38]*APika #for 19 year model
+        APika_sample=NA_matrix[,20:39]*APika #for 19 year model
         APika_sample=APika_sample[,-c(12,17)] # for 19 year model
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,4:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
         #trial_error[,k]=sum((colSums(sampled_census_bodie[,seq(4,20,by=2)],na.rm=T) - colSums(APika_sample[,seq(1,17,by=2)],na.rm=T))^2) #use training set from 1991 onward
       }else if(sum(IC==IC1972)==79){
         APika_sample=NA_matrix*APika
         APika_sample=APika_sample[,-c(2:5,7:17,19,31,36)]
-        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:20],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
+        trial_error[,k]=sum((colSums(sampled_census_bodie[,1:21],na.rm=T) - colSums(APika_sample,na.rm=T))^2)
       }
       
       trial_mean[,k]=mean(colSums(APika_sample,na.rm=T))
@@ -64,9 +73,9 @@ source('Scripts/Load_Initial_Conditions.R')
       trial_pop[[k]]=APika
       
       #the extinction and recolonization events are counted for only sampled years from 1972-2009. This can be easily changed
-      ext_events = matrix(0,nrow=1,ncol=20-1)
-      recol_events = matrix(0,nrow=1,ncol=20-1)
-      for (j in 1:(20-1)){
+      ext_events = matrix(0,nrow=1,ncol=ncol(APika_sample)-1)
+      recol_events = matrix(0,nrow=1,ncol=ncol(APika_sample)-1)
+      for (j in 1:(ncol(APika_sample)-1)){
         ext_events[,j] = sum(APika_sample[,j]>0 & APika_sample[,j+1]==0,na.rm=T)
         recol_events[,j] = sum(APika_sample[,j]==0 & APika_sample[,j+1]>0,na.rm=T)
       }
